@@ -1,340 +1,284 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Globe from 'globe.gl'
 import './App.css'
 
-const STYLES = [
-  { value: 'modern', label: 'Modern minimal' },
-  { value: 'satellite', label: 'Satellite' },
-  { value: 'vintage', label: 'Vintage' },
+const STYLE_PRESETS = {
+  minimal: {
+    label: 'Minimalist',
+    texture: '/earth-dark.jpg',
+    accent: ['#4ade80', '#22d3ee'],
+    atmosphere: '#67e8f9',
+    glow: 'rgba(76, 210, 168, 0.35)',
+  },
+  satellite: {
+    label: 'Satellite night',
+    texture: '/earth-night.jpg',
+    accent: ['#34d399', '#a855f7'],
+    atmosphere: '#a78bfa',
+    glow: 'rgba(91, 151, 255, 0.38)',
+  },
+  vintage: {
+    label: 'Vintage atlas',
+    texture: '/earth-vintage.jpg',
+    accent: ['#fbbf24', '#f59e0b'],
+    atmosphere: '#facc15',
+    glow: 'rgba(199, 156, 88, 0.42)',
+  },
+}
+
+const CITY_CENTERS = [
+  { name: 'Tokyo', lat: 35.6895, lng: 139.6917 },
+  { name: 'Delhi', lat: 28.7041, lng: 77.1025 },
+  { name: 'Shanghai', lat: 31.2304, lng: 121.4737 },
+  { name: 'Dhaka', lat: 23.8103, lng: 90.4125 },
+  { name: 'São Paulo', lat: -23.5505, lng: -46.6333 },
+  { name: 'Mexico City', lat: 19.4326, lng: -99.1332 },
+  { name: 'Cairo', lat: 30.0444, lng: 31.2357 },
+  { name: 'Beijing', lat: 39.9042, lng: 116.4074 },
+  { name: 'Mumbai', lat: 19.076, lng: 72.8777 },
+  { name: 'Osaka', lat: 34.6937, lng: 135.5023 },
+  { name: 'Karachi', lat: 24.8607, lng: 67.0011 },
+  { name: 'Chongqing', lat: 29.4316, lng: 106.9123 },
+  { name: 'Istanbul', lat: 41.0082, lng: 28.9784 },
+  { name: 'Kolkata', lat: 22.5726, lng: 88.3639 },
+  { name: 'Manila', lat: 14.5995, lng: 120.9842 },
+  { name: 'Lagos', lat: 6.5244, lng: 3.3792 },
+  { name: 'Rio de Janeiro', lat: -22.9068, lng: -43.1729 },
+  { name: 'Tianjin', lat: 39.3434, lng: 117.3616 },
+  { name: 'Kinshasa', lat: -4.4419, lng: 15.2663 },
+  { name: 'Guangzhou', lat: 23.1291, lng: 113.2644 },
+  { name: 'Los Angeles', lat: 34.0522, lng: -118.2437 },
+  { name: 'Moscow', lat: 55.7558, lng: 37.6173 },
+  { name: 'Shenzhen', lat: 22.5431, lng: 114.0579 },
+  { name: 'Lahore', lat: 31.5204, lng: 74.3587 },
+  { name: 'Bangalore', lat: 12.9716, lng: 77.5946 },
+  { name: 'Paris', lat: 48.8566, lng: 2.3522 },
+  { name: 'Bogotá', lat: 4.711, lng: -74.0721 },
+  { name: 'Jakarta', lat: -6.2088, lng: 106.8456 },
+  { name: 'Chennai', lat: 13.0827, lng: 80.2707 },
+  { name: 'Lima', lat: -12.0464, lng: -77.0428 },
+  { name: 'Bangkok', lat: 13.7563, lng: 100.5018 },
+  { name: 'Seoul', lat: 37.5665, lng: 126.978 },
+  { name: 'Nagoya', lat: 35.1815, lng: 136.9066 },
+  { name: 'Hyderabad', lat: 17.385, lng: 78.4867 },
+  { name: 'London', lat: 51.5074, lng: -0.1278 },
+  { name: 'Tehran', lat: 35.6892, lng: 51.389 },
+  { name: 'Chicago', lat: 41.8781, lng: -87.6298 },
+  { name: 'Chengdu', lat: 30.5728, lng: 104.0668 },
+  { name: 'Nanjing', lat: 32.0603, lng: 118.7969 },
+  { name: 'Wuhan', lat: 30.5928, lng: 114.3055 },
+  { name: 'Ho Chi Minh City', lat: 10.8231, lng: 106.6297 },
+  { name: 'Luanda', lat: -8.839, lng: 13.2894 },
+  { name: 'Ahmedabad', lat: 23.0225, lng: 72.5714 },
+  { name: 'Kuala Lumpur', lat: 3.139, lng: 101.6869 },
+  { name: 'Hong Kong', lat: 22.3193, lng: 114.1694 },
+  { name: 'Dongguan', lat: 23.0207, lng: 113.7518 },
+  { name: 'Hangzhou', lat: 30.2741, lng: 120.1551 },
+  { name: 'Riyadh', lat: 24.7136, lng: 46.6753 },
+  { name: 'Shenyang', lat: 41.8057, lng: 123.4315 },
+  { name: 'Baghdad', lat: 33.3152, lng: 44.3661 },
 ]
 
-const DEFAULT_STYLE = STYLES[0].value
+const toRadians = (deg) => (deg * Math.PI) / 180
 
-const CONTINENT_SHAPES = [
-  [
-    [0.08, 0.32],
-    [0.14, 0.24],
-    [0.22, 0.2],
-    [0.32, 0.16],
-    [0.34, 0.24],
-    [0.3, 0.28],
-    [0.26, 0.32],
-    [0.2, 0.42],
-    [0.14, 0.4],
-  ],
-  [
-    [0.22, 0.46],
-    [0.28, 0.46],
-    [0.38, 0.6],
-    [0.32, 0.82],
-    [0.24, 0.9],
-    [0.2, 0.78],
-  ],
-  [
-    [0.36, 0.22],
-    [0.46, 0.18],
-    [0.54, 0.18],
-    [0.64, 0.2],
-    [0.66, 0.28],
-    [0.6, 0.32],
-    [0.52, 0.3],
-    [0.44, 0.28],
-  ],
-  [
-    [0.42, 0.32],
-    [0.52, 0.32],
-    [0.64, 0.4],
-    [0.58, 0.56],
-    [0.5, 0.62],
-    [0.44, 0.52],
-    [0.4, 0.42],
-  ],
-  [
-    [0.68, 0.26],
-    [0.78, 0.3],
-    [0.86, 0.36],
-    [0.88, 0.46],
-    [0.82, 0.52],
-    [0.72, 0.48],
-    [0.66, 0.36],
-  ],
-  [
-    [0.72, 0.58],
-    [0.82, 0.62],
-    [0.9, 0.72],
-    [0.88, 0.8],
-    [0.78, 0.78],
-    [0.7, 0.68],
-  ],
-  [
-    [0.82, 0.86],
-    [0.88, 0.9],
-    [0.94, 0.96],
-    [0.9, 0.98],
-    [0.82, 0.94],
-  ],
-]
+function projectToScreen({ lat, lng }, rotationDeg, radius, cx, cy) {
+  const rot = toRadians(rotationDeg)
+  const cosRot = Math.cos(rot)
+  const sinRot = Math.sin(rot)
 
-function drawPolygon(ctx, points, { fill, stroke, jitter = 0 }) {
-  const { width, height } = ctx.canvas
-  ctx.beginPath()
-  points.forEach(([x, y], index) => {
-    const px = x * width + (Math.random() - 0.5) * jitter
-    const py = y * height + (Math.random() - 0.5) * jitter
-    if (index === 0) ctx.moveTo(px, py)
-    else ctx.lineTo(px, py)
-  })
-  ctx.closePath()
-  if (fill) {
-    ctx.fillStyle = fill
-    ctx.fill()
-  }
-  if (stroke) {
-    ctx.strokeStyle = stroke.color
-    ctx.lineWidth = stroke.width
-    ctx.stroke()
-  }
-}
+  const latR = toRadians(lat)
+  const lngR = toRadians(lng)
 
-function addNoise(ctx, density, alpha = 0.14) {
-  const { width, height } = ctx.canvas
-  const count = Math.floor(width * height * density)
-  ctx.save()
-  ctx.globalAlpha = alpha
-  ctx.fillStyle = '#ffffff'
-  for (let i = 0; i < count; i += 1) {
-    ctx.fillRect(Math.random() * width, Math.random() * height, 1, 1)
-  }
-  ctx.restore()
-}
+  const x = Math.cos(latR) * Math.sin(lngR)
+  const y = Math.sin(latR)
+  const z = Math.cos(latR) * Math.cos(lngR)
 
-function drawGraticules(ctx, color) {
-  const { width, height } = ctx.canvas
-  ctx.save()
-  ctx.strokeStyle = color
-  ctx.lineWidth = 1
-  for (let lon = 0; lon <= 360; lon += 30) {
-    const x = (lon / 360) * width
-    ctx.beginPath()
-    ctx.moveTo(x, 0)
-    ctx.lineTo(x, height)
-    ctx.stroke()
-  }
-  for (let lat = 0; lat <= 180; lat += 30) {
-    const y = (lat / 180) * height
-    ctx.beginPath()
-    ctx.moveTo(0, y)
-    ctx.lineTo(width, y)
-    ctx.stroke()
-  }
-  ctx.restore()
-}
+  const xRot = x * cosRot - z * sinRot
+  const zRot = x * sinRot + z * cosRot
 
-function createTextureSet(style) {
-  const size = 1920
-  const mapCanvas = document.createElement('canvas')
-  mapCanvas.width = size
-  mapCanvas.height = size / 2
-  const mapCtx = mapCanvas.getContext('2d')
-
-  const bumpCanvas = document.createElement('canvas')
-  bumpCanvas.width = size
-  bumpCanvas.height = size / 2
-  const bumpCtx = bumpCanvas.getContext('2d')
-
-  const cloudCanvas = document.createElement('canvas')
-  cloudCanvas.width = size
-  cloudCanvas.height = size / 2
-  const cloudCtx = cloudCanvas.getContext('2d')
-
-  const palettes = {
-    modern: {
-      ocean: ['#071829', '#0b2641'],
-      land: ['#22c55e', '#15803d'],
-      shore: 'rgba(255,255,255,0.35)',
-      grid: 'rgba(255,255,255,0.2)',
-      hazeTop: 'rgba(255,255,255,0.14)',
-      hazeBottom: 'rgba(0,0,0,0.18)',
-    },
-    satellite: {
-      ocean: ['#0a325c', '#051932'],
-      land: ['#2f855a', '#1f5133'],
-      shore: 'rgba(204, 188, 146, 0.55)',
-      grid: 'rgba(255,255,255,0.12)',
-      hazeTop: 'rgba(255,255,255,0.1)',
-      hazeBottom: 'rgba(0,0,0,0.2)',
-    },
-    vintage: {
-      ocean: ['#c3ad84', '#9c855a'],
-      land: ['#7a5a38', '#5a4228'],
-      shore: 'rgba(255, 237, 209, 0.45)',
-      grid: 'rgba(66, 46, 32, 0.35)',
-      hazeTop: 'rgba(255,255,255,0.12)',
-      hazeBottom: 'rgba(60,43,30,0.2)',
-    },
-  }
-
-  const palette = palettes[style]
-
-  const ocean = mapCtx.createLinearGradient(0, 0, 0, mapCanvas.height)
-  ocean.addColorStop(0, palette.ocean[0])
-  ocean.addColorStop(1, palette.ocean[1])
-  mapCtx.fillStyle = ocean
-  mapCtx.fillRect(0, 0, mapCanvas.width, mapCanvas.height)
-
-  const bumpOcean = bumpCtx.createLinearGradient(0, 0, 0, bumpCanvas.height)
-  bumpOcean.addColorStop(0, '#2a2a2a')
-  bumpOcean.addColorStop(1, '#000000')
-  bumpCtx.fillStyle = bumpOcean
-  bumpCtx.fillRect(0, 0, bumpCanvas.width, bumpCanvas.height)
-
-  CONTINENT_SHAPES.forEach((points) => {
-    const landGradient = mapCtx.createLinearGradient(0, 0, mapCanvas.width, mapCanvas.height)
-    landGradient.addColorStop(0, palette.land[0])
-    landGradient.addColorStop(1, palette.land[1])
-    drawPolygon(mapCtx, points, {
-      fill: landGradient,
-      stroke: { color: palette.shore, width: 3 },
-      jitter: style === 'modern' ? 3 : 1.5,
-    })
-
-    drawPolygon(bumpCtx, points, {
-      fill: '#888888',
-      stroke: { color: 'rgba(0,0,0,0.25)', width: 2 },
-      jitter: 2,
-    })
-  })
-
-  drawGraticules(mapCtx, palette.grid)
-
-  mapCtx.save()
-  const haze = mapCtx.createLinearGradient(0, 0, 0, mapCanvas.height)
-  haze.addColorStop(0, palette.hazeTop)
-  haze.addColorStop(0.5, 'rgba(255,255,255,0)')
-  haze.addColorStop(1, palette.hazeBottom)
-  mapCtx.fillStyle = haze
-  mapCtx.fillRect(0, 0, mapCanvas.width, mapCanvas.height)
-  mapCtx.restore()
-
-  addNoise(mapCtx, 0.00004, 0.2)
-  addNoise(bumpCtx, 0.000025, 0.4)
-
-  cloudCtx.strokeStyle = 'rgba(255,255,255,0.22)'
-  cloudCtx.lineWidth = 14
-  cloudCtx.filter = 'blur(1px)'
-  for (let i = 0; i < 5; i += 1) {
-    const y = (cloudCanvas.height / 6) * (i + 1)
-    cloudCtx.beginPath()
-    cloudCtx.moveTo(-50, y + Math.sin(i * 1.6) * 8)
-    cloudCtx.bezierCurveTo(
-      cloudCanvas.width * 0.22,
-      y + 10,
-      cloudCanvas.width * 0.55,
-      y - 12,
-      cloudCanvas.width + 50,
-      y + 6,
-    )
-    cloudCtx.stroke()
-  }
+  if (zRot < 0) return null
 
   return {
-    map: mapCanvas.toDataURL('image/png'),
-    bump: bumpCanvas.toDataURL('image/png'),
-    clouds: cloudCanvas.toDataURL('image/png'),
+    x: cx + radius * xRot,
+    y: cy - radius * y,
+    depth: zRot,
   }
+}
+
+function drawHex(ctx, x, y, size, color, glow) {
+  const sides = 6
+  ctx.beginPath()
+  for (let i = 0; i < sides; i += 1) {
+    const angle = (Math.PI / 3) * i - Math.PI / 6
+    const px = x + size * Math.cos(angle)
+    const py = y + size * Math.sin(angle)
+    if (i === 0) ctx.moveTo(px, py)
+    else ctx.lineTo(px, py)
+  }
+  ctx.closePath()
+  ctx.fillStyle = color
+  ctx.shadowColor = glow
+  ctx.shadowBlur = size * 1.4
+  ctx.fill()
+  ctx.shadowBlur = 0
+}
+
+function createCityHexes() {
+  return CITY_CENTERS.map((city) => {
+    const clusters = Array.from({ length: 20 }, () => Math.random())
+    const magnitude = clusters.reduce((sum, n) => sum + n, 0) / clusters.length
+    const spread = 0.8 + Math.random() * 0.9
+    return {
+      ...city,
+      magnitude,
+      spread,
+    }
+  })
 }
 
 function App() {
   const globeMountRef = useRef(null)
+  const overlayRef = useRef(null)
   const globeInstanceRef = useRef(null)
-  const textureCache = useRef({})
-  const [style, setStyle] = useState(DEFAULT_STYLE)
+  const animationRef = useRef(null)
+  const rotationRef = useRef(220)
+  const [style, setStyle] = useState('minimal')
   const [ready, setReady] = useState(false)
 
-  const getTextures = (currentStyle) => {
-    if (!textureCache.current[currentStyle]) {
-      textureCache.current[currentStyle] = createTextureSet(currentStyle)
-    }
-    return textureCache.current[currentStyle]
-  }
+  const cityHexes = useMemo(() => createCityHexes(), [])
 
   useEffect(() => {
+    setReady(false)
     const mount = globeMountRef.current
-    if (!mount) return
+    const overlay = overlayRef.current
+    if (!mount || !overlay) return undefined
 
     const globe = Globe({ animateIn: true })(mount)
     globeInstanceRef.current = globe
 
-    const { map, bump, clouds } = getTextures(DEFAULT_STYLE)
+    const syncSize = () => {
+      const { clientWidth, clientHeight } = mount
+      globe.width(clientWidth)
+      globe.height(clientHeight)
+      overlay.width = clientWidth
+      overlay.height = clientHeight
+    }
+
+    syncSize()
+    window.addEventListener('resize', syncSize)
+
+    const run = () => {
+      rotationRef.current = (rotationRef.current + 0.22) % 360
+      globe.pointOfView({ lng: rotationRef.current })
+      drawHexLayer(rotationRef.current)
+      animationRef.current = requestAnimationFrame(run)
+    }
+
+    const drawHexLayer = (rotationDeg) => {
+      const ctx = overlay.getContext('2d')
+      ctx.clearRect(0, 0, overlay.width, overlay.height)
+      const radius = Math.min(overlay.width, overlay.height) * 0.42
+      const cx = overlay.width / 2
+      const cy = overlay.height / 2
+      const palette = STYLE_PRESETS[style]
+
+      const maxMagnitude = Math.max(...cityHexes.map((c) => c.magnitude))
+
+      cityHexes.forEach((city) => {
+        const projected = projectToScreen(city, rotationDeg, radius, cx, cy)
+        if (!projected) return
+        const normalized = city.magnitude / maxMagnitude
+        const size = 10 + normalized * 24
+        const altitude = 0.6 + normalized * 0.9
+
+        const gradient = ctx.createLinearGradient(projected.x, projected.y - size * altitude, projected.x, projected.y + size)
+        gradient.addColorStop(0, palette.accent[1])
+        gradient.addColorStop(1, palette.accent[0])
+
+        drawHex(ctx, projected.x, projected.y - size * 0.25, size, gradient, palette.glow)
+
+        ctx.fillStyle = 'rgba(255,255,255,0.8)'
+        ctx.font = '600 12px Inter, system-ui'
+        ctx.textAlign = 'center'
+        ctx.fillText(city.name, projected.x, projected.y - size * altitude - 6)
+      })
+    }
 
     globe
       .backgroundColor('transparent')
-      .globeImageUrl(map)
-      .bumpImageUrl(bump)
-      .cloudsImageUrl(clouds)
-      .cloudsOpacity(0.2)
-      .cloudsSpeed(0.006)
+      .globeImageUrl(STYLE_PRESETS[style].texture)
+      .bumpImageUrl(null)
+      .cloudsImageUrl(null)
+      .cloudsOpacity(0)
       .showAtmosphere(true)
-      .atmosphereColor('#9bb8ff')
-      .atmosphereAltitude(0.18)
-      .pointOfView({ lng: -20 })
+      .atmosphereColor(STYLE_PRESETS[style].atmosphere)
+      .atmosphereAltitude(0.12)
+      .pointOfView({ lng: rotationRef.current })
 
-    const controls = globe.controls()
-    controls.autoRotate = true
-    controls.autoRotateSpeed = 0.24
-
-    const handleResize = () => {
-      const { clientWidth, clientHeight } = mount
-      globe.width(clientWidth * 1.08)
-      globe.height(clientHeight * 1.08)
-    }
-
-    window.addEventListener('resize', handleResize)
-    handleResize()
-
-    globe.onGlobeReady(() => setReady(true))
-    const readyTimeout = setTimeout(() => setReady(true), 800)
+    const readyTimeout = setTimeout(() => setReady(true), 600)
+    animationRef.current = requestAnimationFrame(run)
 
     return () => {
+      cancelAnimationFrame(animationRef.current)
       clearTimeout(readyTimeout)
-      window.removeEventListener('resize', handleResize)
+      window.removeEventListener('resize', syncSize)
       globe.destroy()
-      globeInstanceRef.current = null
     }
-  }, [])
+  }, [cityHexes, style])
 
   useEffect(() => {
     const globe = globeInstanceRef.current
     if (!globe) return
-    const { map, bump, clouds } = getTextures(style)
-    globe.globeImageUrl(map)
-    globe.bumpImageUrl(bump)
-    globe.cloudsImageUrl(clouds)
+    const preset = STYLE_PRESETS[style]
+    globe.globeImageUrl(preset.texture)
+    globe.atmosphereColor(preset.atmosphere)
   }, [style])
 
   return (
     <div className="page">
-      <header>
-        <h1>Earth spotlight</h1>
-        <p>Rotating textures, clouds, and a halo to keep the planet front and center.</p>
-      </header>
-      <div className="content">
-        <div className="panel">
-          <label htmlFor="style">Map style</label>
-          <select id="style" value={style} onChange={(e) => setStyle(e.target.value)} disabled={!ready}>
-            {STYLES.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
-          </select>
-          <ul className="legend">
-            <li><span className="swatch modern" />Modern keeps crisp lines and emerald landmasses.</li>
-            <li><span className="swatch satellite" />Satellite leans into lush greens and moody oceans.</li>
-            <li><span className="swatch vintage" />Vintage warms the palette with parchment seas.</li>
-          </ul>
+      <div className="hero">
+        <div>
+          <p className="eyebrow">Hex bins on a living planet</p>
+          <h1>City intensity globe</h1>
+          <p className="lede">
+            Fifty of the world&apos;s largest cities drive the random data powering this hexagonal layer.
+            Watch the clusters glide as the globe spins edge-to-edge.
+          </p>
+          <div className="controls">
+            <label htmlFor="style">Globe texture</label>
+            <div className="select">
+              <select id="style" value={style} onChange={(e) => setStyle(e.target.value)} disabled={!ready}>
+                {Object.entries(STYLE_PRESETS).map(([value, preset]) => (
+                  <option key={value} value={value}>
+                    {preset.label}
+                  </option>
+                ))}
+              </select>
+              <span className="hint">Minimal uses earth-dark, Satellite pulls earth-night, Vintage leans on earth-vintage.</span>
+            </div>
+          </div>
         </div>
-        <div className="globe" ref={globeMountRef}>
+        <div className="legend">
+          <div className="legend-row">
+            <span className="chip" />
+            <div>
+              <strong>Hex bins</strong>
+              <p>Aggregated random magnitudes per city rendered as glowing prisms.</p>
+            </div>
+          </div>
+          <div className="legend-row">
+            <span className="chip soft" />
+            <div>
+              <strong>Rotation</strong>
+              <p>Driven by the same point-of-view updates as the texture background.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="globe-area">
+        <div className="globe-shell" ref={globeMountRef}>
+          <canvas ref={overlayRef} className="hex-overlay" />
           {!ready && <div className="loading">Preparing globe visuals…</div>}
         </div>
       </div>
