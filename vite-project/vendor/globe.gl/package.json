@@ -1,0 +1,8 @@
+{
+  "name": "globe.gl",
+  "version": "0.0.0-local",
+  "type": "module",
+  "main": "index.js",
+  "description": "Local fallback globe renderer used for offline environments",
+  "license": "MIT"
+}
