@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Globe from 'globe.gl'
 import './App.css'
 
 const STYLES = [
@@ -7,219 +8,320 @@ const STYLES = [
   { value: 'vintage', label: 'Vintage' },
 ]
 
-function createTexture(THREE, style) {
-  const size = 1024
-  const canvas = document.createElement('canvas')
-  canvas.width = size
-  canvas.height = size / 2
-  const ctx = canvas.getContext('2d')
+const DEFAULT_STYLE = STYLES[0].value
 
-  const drawContinents = (color, alpha = 1, jitter = 0) => {
-    ctx.save()
-    ctx.globalAlpha = alpha
-    ctx.fillStyle = color
-    const blobs = 6
-    for (let i = 0; i < blobs; i += 1) {
-      const x = Math.random() * size
-      const y = Math.random() * canvas.height
-      const w = 140 + Math.random() * 260
-      const h = 80 + Math.random() * 180
-      ctx.beginPath()
-      ctx.ellipse(x + Math.random() * jitter, y + Math.random() * jitter, w, h, Math.random(), 0, Math.PI * 2)
-      ctx.fill()
-    }
-    ctx.restore()
+const CONTINENT_SHAPES = [
+  [
+    [0.08, 0.32],
+    [0.14, 0.24],
+    [0.22, 0.2],
+    [0.32, 0.16],
+    [0.34, 0.24],
+    [0.3, 0.28],
+    [0.26, 0.32],
+    [0.2, 0.42],
+    [0.14, 0.4],
+  ],
+  [
+    [0.22, 0.46],
+    [0.28, 0.46],
+    [0.38, 0.6],
+    [0.32, 0.82],
+    [0.24, 0.9],
+    [0.2, 0.78],
+  ],
+  [
+    [0.36, 0.22],
+    [0.46, 0.18],
+    [0.54, 0.18],
+    [0.64, 0.2],
+    [0.66, 0.28],
+    [0.6, 0.32],
+    [0.52, 0.3],
+    [0.44, 0.28],
+  ],
+  [
+    [0.42, 0.32],
+    [0.52, 0.32],
+    [0.64, 0.4],
+    [0.58, 0.56],
+    [0.5, 0.62],
+    [0.44, 0.52],
+    [0.4, 0.42],
+  ],
+  [
+    [0.68, 0.26],
+    [0.78, 0.3],
+    [0.86, 0.36],
+    [0.88, 0.46],
+    [0.82, 0.52],
+    [0.72, 0.48],
+    [0.66, 0.36],
+  ],
+  [
+    [0.72, 0.58],
+    [0.82, 0.62],
+    [0.9, 0.72],
+    [0.88, 0.8],
+    [0.78, 0.78],
+    [0.7, 0.68],
+  ],
+  [
+    [0.82, 0.86],
+    [0.88, 0.9],
+    [0.94, 0.96],
+    [0.9, 0.98],
+    [0.82, 0.94],
+  ],
+]
+
+function drawPolygon(ctx, points, { fill, stroke, jitter = 0 }) {
+  const { width, height } = ctx.canvas
+  ctx.beginPath()
+  points.forEach(([x, y], index) => {
+    const px = x * width + (Math.random() - 0.5) * jitter
+    const py = y * height + (Math.random() - 0.5) * jitter
+    if (index === 0) ctx.moveTo(px, py)
+    else ctx.lineTo(px, py)
+  })
+  ctx.closePath()
+  if (fill) {
+    ctx.fillStyle = fill
+    ctx.fill()
   }
-
-  if (style === 'modern') {
-    ctx.fillStyle = '#0f172a'
-    ctx.fillRect(0, 0, size, canvas.height)
-
-    ctx.fillStyle = '#1e293b'
-    for (let i = 0; i < 10; i += 1) {
-      ctx.fillRect((i / 10) * size, 0, 2, canvas.height)
-    }
-    drawContinents('#22c55e', 1, 30)
-    drawContinents('#16a34a', 0.6, 40)
-
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)'
-    ctx.lineWidth = 1
-    for (let lat = 0; lat <= 180; lat += 30) {
-      const y = (lat / 180) * canvas.height
-      ctx.beginPath()
-      ctx.moveTo(0, y)
-      ctx.lineTo(size, y)
-      ctx.stroke()
-    }
-  } else if (style === 'satellite') {
-    const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height)
-    gradient.addColorStop(0, '#0b3b8c')
-    gradient.addColorStop(1, '#071f4d')
-    ctx.fillStyle = gradient
-    ctx.fillRect(0, 0, size, canvas.height)
-
-    drawContinents('#1f5133', 1, 60)
-    drawContinents('#2f855a', 0.7, 70)
-    drawContinents('#c6b08e', 0.3, 80)
-
-    ctx.fillStyle = 'rgba(255,255,255,0.2)'
-    for (let i = 0; i < 2000; i += 1) {
-      const x = Math.random() * size
-      const y = Math.random() * canvas.height
-      ctx.fillRect(x, y, 1, 1)
-    }
-  } else {
-    ctx.fillStyle = '#d8c6a3'
-    ctx.fillRect(0, 0, size, canvas.height)
-
-    ctx.strokeStyle = '#9c855a'
-    ctx.lineWidth = 2
-    for (let lat = 0; lat <= 180; lat += 20) {
-      const y = (lat / 180) * canvas.height
-      ctx.beginPath()
-      ctx.moveTo(0, y)
-      ctx.lineTo(size, y)
-      ctx.stroke()
-    }
-    for (let lng = 0; lng <= 360; lng += 20) {
-      const x = (lng / 360) * size
-      ctx.beginPath()
-      ctx.moveTo(x, 0)
-      ctx.lineTo(x, canvas.height)
-      ctx.stroke()
-    }
-
-    drawContinents('#b68b60', 0.9, 50)
-    drawContinents('#8f6b43', 0.6, 60)
-
-    ctx.strokeStyle = 'rgba(0,0,0,0.2)'
-    ctx.lineWidth = 4
-    ctx.beginPath()
-    ctx.arc(size * 0.25, canvas.height * 0.35, 80, 0, Math.PI * 2)
+  if (stroke) {
+    ctx.strokeStyle = stroke.color
+    ctx.lineWidth = stroke.width
     ctx.stroke()
   }
+}
 
-  const texture = new THREE.CanvasTexture(canvas)
-  texture.anisotropy = 8
-  texture.needsUpdate = true
-  return texture
+function addNoise(ctx, density, alpha = 0.14) {
+  const { width, height } = ctx.canvas
+  const count = Math.floor(width * height * density)
+  ctx.save()
+  ctx.globalAlpha = alpha
+  ctx.fillStyle = '#ffffff'
+  for (let i = 0; i < count; i += 1) {
+    ctx.fillRect(Math.random() * width, Math.random() * height, 1, 1)
+  }
+  ctx.restore()
+}
+
+function drawGraticules(ctx, color) {
+  const { width, height } = ctx.canvas
+  ctx.save()
+  ctx.strokeStyle = color
+  ctx.lineWidth = 1
+  for (let lon = 0; lon <= 360; lon += 30) {
+    const x = (lon / 360) * width
+    ctx.beginPath()
+    ctx.moveTo(x, 0)
+    ctx.lineTo(x, height)
+    ctx.stroke()
+  }
+  for (let lat = 0; lat <= 180; lat += 30) {
+    const y = (lat / 180) * height
+    ctx.beginPath()
+    ctx.moveTo(0, y)
+    ctx.lineTo(width, y)
+    ctx.stroke()
+  }
+  ctx.restore()
+}
+
+function createTextureSet(style) {
+  const size = 1920
+  const mapCanvas = document.createElement('canvas')
+  mapCanvas.width = size
+  mapCanvas.height = size / 2
+  const mapCtx = mapCanvas.getContext('2d')
+
+  const bumpCanvas = document.createElement('canvas')
+  bumpCanvas.width = size
+  bumpCanvas.height = size / 2
+  const bumpCtx = bumpCanvas.getContext('2d')
+
+  const cloudCanvas = document.createElement('canvas')
+  cloudCanvas.width = size
+  cloudCanvas.height = size / 2
+  const cloudCtx = cloudCanvas.getContext('2d')
+
+  const palettes = {
+    modern: {
+      ocean: ['#071829', '#0b2641'],
+      land: ['#22c55e', '#15803d'],
+      shore: 'rgba(255,255,255,0.35)',
+      grid: 'rgba(255,255,255,0.2)',
+      hazeTop: 'rgba(255,255,255,0.14)',
+      hazeBottom: 'rgba(0,0,0,0.18)',
+    },
+    satellite: {
+      ocean: ['#0a325c', '#051932'],
+      land: ['#2f855a', '#1f5133'],
+      shore: 'rgba(204, 188, 146, 0.55)',
+      grid: 'rgba(255,255,255,0.12)',
+      hazeTop: 'rgba(255,255,255,0.1)',
+      hazeBottom: 'rgba(0,0,0,0.2)',
+    },
+    vintage: {
+      ocean: ['#c3ad84', '#9c855a'],
+      land: ['#7a5a38', '#5a4228'],
+      shore: 'rgba(255, 237, 209, 0.45)',
+      grid: 'rgba(66, 46, 32, 0.35)',
+      hazeTop: 'rgba(255,255,255,0.12)',
+      hazeBottom: 'rgba(60,43,30,0.2)',
+    },
+  }
+
+  const palette = palettes[style]
+
+  const ocean = mapCtx.createLinearGradient(0, 0, 0, mapCanvas.height)
+  ocean.addColorStop(0, palette.ocean[0])
+  ocean.addColorStop(1, palette.ocean[1])
+  mapCtx.fillStyle = ocean
+  mapCtx.fillRect(0, 0, mapCanvas.width, mapCanvas.height)
+
+  const bumpOcean = bumpCtx.createLinearGradient(0, 0, 0, bumpCanvas.height)
+  bumpOcean.addColorStop(0, '#2a2a2a')
+  bumpOcean.addColorStop(1, '#000000')
+  bumpCtx.fillStyle = bumpOcean
+  bumpCtx.fillRect(0, 0, bumpCanvas.width, bumpCanvas.height)
+
+  CONTINENT_SHAPES.forEach((points) => {
+    const landGradient = mapCtx.createLinearGradient(0, 0, mapCanvas.width, mapCanvas.height)
+    landGradient.addColorStop(0, palette.land[0])
+    landGradient.addColorStop(1, palette.land[1])
+    drawPolygon(mapCtx, points, {
+      fill: landGradient,
+      stroke: { color: palette.shore, width: 3 },
+      jitter: style === 'modern' ? 3 : 1.5,
+    })
+
+    drawPolygon(bumpCtx, points, {
+      fill: '#888888',
+      stroke: { color: 'rgba(0,0,0,0.25)', width: 2 },
+      jitter: 2,
+    })
+  })
+
+  drawGraticules(mapCtx, palette.grid)
+
+  mapCtx.save()
+  const haze = mapCtx.createLinearGradient(0, 0, 0, mapCanvas.height)
+  haze.addColorStop(0, palette.hazeTop)
+  haze.addColorStop(0.5, 'rgba(255,255,255,0)')
+  haze.addColorStop(1, palette.hazeBottom)
+  mapCtx.fillStyle = haze
+  mapCtx.fillRect(0, 0, mapCanvas.width, mapCanvas.height)
+  mapCtx.restore()
+
+  addNoise(mapCtx, 0.00004, 0.2)
+  addNoise(bumpCtx, 0.000025, 0.4)
+
+  cloudCtx.strokeStyle = 'rgba(255,255,255,0.22)'
+  cloudCtx.lineWidth = 14
+  cloudCtx.filter = 'blur(1px)'
+  for (let i = 0; i < 5; i += 1) {
+    const y = (cloudCanvas.height / 6) * (i + 1)
+    cloudCtx.beginPath()
+    cloudCtx.moveTo(-50, y + Math.sin(i * 1.6) * 8)
+    cloudCtx.bezierCurveTo(
+      cloudCanvas.width * 0.22,
+      y + 10,
+      cloudCanvas.width * 0.55,
+      y - 12,
+      cloudCanvas.width + 50,
+      y + 6,
+    )
+    cloudCtx.stroke()
+  }
+
+  return {
+    map: mapCanvas.toDataURL('image/png'),
+    bump: bumpCanvas.toDataURL('image/png'),
+    clouds: cloudCanvas.toDataURL('image/png'),
+  }
 }
 
 function App() {
-  const mountRef = useRef(null)
-  const globeRef = useRef(null)
-  const rendererRef = useRef(null)
-  const sceneRef = useRef(null)
-  const cameraRef = useRef(null)
-  const threeRef = useRef(null)
-  const frameRef = useRef(null)
-  const [style, setStyle] = useState('modern')
-  const [threeReady, setThreeReady] = useState(false)
+  const globeMountRef = useRef(null)
+  const globeInstanceRef = useRef(null)
+  const textureCache = useRef({})
+  const [style, setStyle] = useState(DEFAULT_STYLE)
+  const [ready, setReady] = useState(false)
+
+  const getTextures = (currentStyle) => {
+    if (!textureCache.current[currentStyle]) {
+      textureCache.current[currentStyle] = createTextureSet(currentStyle)
+    }
+    return textureCache.current[currentStyle]
+  }
 
   useEffect(() => {
-    let isMounted = true
-    let cleanupFn
+    const mount = globeMountRef.current
+    if (!mount) return
 
-    const init = async () => {
-      const THREE = await import('https://esm.sh/three@0.169.0')
-      if (!isMounted || !mountRef.current) return
+    const globe = Globe({ animateIn: true })(mount)
+    globeInstanceRef.current = globe
 
-      threeRef.current = THREE
+    const { map, bump, clouds } = getTextures(DEFAULT_STYLE)
 
-      const scene = new THREE.Scene()
-      scene.background = null
-      sceneRef.current = scene
+    globe
+      .backgroundColor('transparent')
+      .globeImageUrl(map)
+      .bumpImageUrl(bump)
+      .cloudsImageUrl(clouds)
+      .cloudsOpacity(0.2)
+      .cloudsSpeed(0.006)
+      .showAtmosphere(true)
+      .atmosphereColor('#9bb8ff')
+      .atmosphereAltitude(0.18)
+      .pointOfView({ lng: -20 })
 
-      const camera = new THREE.PerspectiveCamera(55, 1, 0.1, 100)
-      camera.position.set(0, 0, 5)
-      cameraRef.current = camera
+    const controls = globe.controls()
+    controls.autoRotate = true
+    controls.autoRotateSpeed = 0.24
 
-      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-      renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight)
-      mountRef.current.appendChild(renderer.domElement)
-      rendererRef.current = renderer
-
-      const sphereGeo = new THREE.SphereGeometry(2, 96, 96)
-      const texture = createTexture(THREE, style)
-      const material = new THREE.MeshStandardMaterial({ map: texture, roughness: 0.9, metalness: 0.15 })
-      const globe = new THREE.Mesh(sphereGeo, material)
-      globeRef.current = globe
-      scene.add(globe)
-
-      const glowMaterial = new THREE.MeshBasicMaterial({ color: '#8eb3ff', transparent: true, opacity: 0.12, side: THREE.BackSide })
-      const glow = new THREE.Mesh(new THREE.SphereGeometry(2.05, 96, 96), glowMaterial)
-      scene.add(glow)
-
-      const ambient = new THREE.AmbientLight('#cbd5e1', 0.8)
-      const directional = new THREE.DirectionalLight('#ffffff', 1.1)
-      directional.position.set(3, 4, 5)
-      scene.add(ambient)
-      scene.add(directional)
-
-      const animate = () => {
-        frameRef.current = requestAnimationFrame(animate)
-        globe.rotation.y += 0.0025
-        globe.rotation.x = Math.sin(Date.now() * 0.0001) * 0.1
-        renderer.render(scene, camera)
-      }
-      animate()
-
-      const onResize = () => {
-        if (!mountRef.current) return
-        const { clientWidth, clientHeight } = mountRef.current
-        renderer.setSize(clientWidth, clientHeight)
-        camera.aspect = clientWidth / clientHeight
-        camera.updateProjectionMatrix()
-      }
-      window.addEventListener('resize', onResize)
-      onResize()
-
-      setThreeReady(true)
-
-      cleanupFn = () => {
-        window.removeEventListener('resize', onResize)
-        if (frameRef.current) cancelAnimationFrame(frameRef.current)
-        if (globeRef.current) {
-          globeRef.current.geometry.dispose()
-          globeRef.current.material.map?.dispose()
-          globeRef.current.material.dispose()
-        }
-        rendererRef.current?.dispose()
-        if (rendererRef.current?.domElement && mountRef.current) {
-          mountRef.current.removeChild(rendererRef.current.domElement)
-        }
-      }
+    const handleResize = () => {
+      const { clientWidth, clientHeight } = mount
+      globe.width(clientWidth * 1.08)
+      globe.height(clientHeight * 1.08)
     }
 
-    init()
+    window.addEventListener('resize', handleResize)
+    handleResize()
+
+    globe.onGlobeReady(() => setReady(true))
+    const readyTimeout = setTimeout(() => setReady(true), 800)
 
     return () => {
-      isMounted = false
-      if (typeof cleanupFn === 'function') cleanupFn()
+      clearTimeout(readyTimeout)
+      window.removeEventListener('resize', handleResize)
+      globe.destroy()
+      globeInstanceRef.current = null
     }
   }, [])
 
   useEffect(() => {
-    if (!threeRef.current || !globeRef.current) return
-    const THREE = threeRef.current
-    const newTexture = createTexture(THREE, style)
-    const globe = globeRef.current
-    if (globe.material.map) globe.material.map.dispose()
-    globe.material.map = newTexture
-    globe.material.needsUpdate = true
+    const globe = globeInstanceRef.current
+    if (!globe) return
+    const { map, bump, clouds } = getTextures(style)
+    globe.globeImageUrl(map)
+    globe.bumpImageUrl(bump)
+    globe.cloudsImageUrl(clouds)
   }, [style])
 
   return (
     <div className="page">
       <header>
-        <h1>Interactive Three.js Globe</h1>
-        <p>Rotate the planet and switch between minimalist, satellite, and vintage moods.</p>
+        <h1>Earth spotlight</h1>
+        <p>Rotating textures, clouds, and a halo to keep the planet front and center.</p>
       </header>
       <div className="content">
         <div className="panel">
           <label htmlFor="style">Map style</label>
-          <select id="style" value={style} onChange={(e) => setStyle(e.target.value)} disabled={!threeReady}>
+          <select id="style" value={style} onChange={(e) => setStyle(e.target.value)} disabled={!ready}>
             {STYLES.map((item) => (
               <option key={item.value} value={item.value}>
                 {item.label}
@@ -227,13 +329,13 @@ function App() {
             ))}
           </select>
           <ul className="legend">
-            <li><span className="swatch modern" />Modern uses crisp grid lines and soft greens.</li>
-            <li><span className="swatch satellite" />Satellite leans into lush greens with depth.</li>
-            <li><span className="swatch vintage" />Vintage brings parchment tones and meridians.</li>
+            <li><span className="swatch modern" />Modern keeps crisp lines and emerald landmasses.</li>
+            <li><span className="swatch satellite" />Satellite leans into lush greens and moody oceans.</li>
+            <li><span className="swatch vintage" />Vintage warms the palette with parchment seas.</li>
           </ul>
         </div>
-        <div className="globe" ref={mountRef}>
-          {!threeReady && <div className="loading">Loading Three.js…</div>}
+        <div className="globe" ref={globeMountRef}>
+          {!ready && <div className="loading">Preparing globe visuals…</div>}
         </div>
       </div>
     </div>
