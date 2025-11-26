@@ -1,133 +1,162 @@
 :root {
   color-scheme: dark;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: radial-gradient(circle at 20% 20%, #0b1224, #050914 55%), #050914;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at 18% 18%, #0c142c, #050915 55%), #050915;
   color: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at 20% 20%, #0b1224, #050914 55%), #050914;
+  background: radial-gradient(circle at 18% 18%, #0c142c, #050915 55%), #050915;
+  color: #e2e8f0;
 }
 
 .page {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 3rem 1.5rem 4rem;
+  min-height: 100vh;
+  padding: 2.5rem clamp(1.25rem, 4vw, 3.5rem) 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-header h1 {
-  font-size: 2.4rem;
-  margin: 0 0 0.5rem;
-  letter-spacing: 0.02em;
-}
-
-header p {
-  margin: 0;
-  color: #cbd5e1;
-}
-
-
-.content {
+.hero {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  gap: 1.75rem;
-  align-items: stretch;
+  grid-template-columns: 1.4fr 1fr;
+  align-items: start;
+  gap: clamp(1.25rem, 4vw, 2.5rem);
 }
 
-.panel {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 1.35rem;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(6px);
-}
-
-.panel label {
-  display: block;
-  font-size: 0.9rem;
-  margin-bottom: 0.4rem;
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
   color: #94a3b8;
+  font-weight: 700;
+  margin: 0 0 0.35rem;
+  font-size: 0.85rem;
 }
 
-.panel select {
-  width: 100%;
-  padding: 0.75rem 0.85rem;
+h1 {
+  margin: 0;
+  font-size: clamp(2.25rem, 4vw, 3rem);
+  letter-spacing: 0.01em;
+}
+
+.lede {
+  color: #cbd5e1;
+  margin: 0.6rem 0 1.25rem;
+  max-width: 640px;
+}
+
+.controls {
+  display: grid;
+  gap: 0.5rem;
+  align-items: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1rem 1rem 1.05rem;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.controls label {
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.select {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.select select {
+  padding: 0.75rem 0.9rem;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.06);
   color: #e2e8f0;
   font-size: 1rem;
 }
 
+.select select:disabled {
+  opacity: 0.6;
+}
+
+.select .hint {
+  color: #9fb2ce;
+  font-size: 0.9rem;
+}
+
 .legend {
-  list-style: none;
-  padding: 0;
-  margin: 1rem 0 0;
   display: grid;
-  gap: 0.6rem;
+  gap: 0.75rem;
+  align-content: start;
 }
 
-.legend li {
-  display: flex;
+.legend-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
   align-items: center;
-  gap: 0.5rem;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+}
+
+.legend-row strong {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.legend-row p {
+  margin: 0;
   color: #cbd5e1;
-  font-size: 0.95rem;
 }
 
-.swatch {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+.chip {
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #34d399, #22d3ee);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 16px rgba(52, 211, 153, 0.45);
 }
 
-.swatch.modern {
-  background: linear-gradient(135deg, #22c55e, #16a34a);
+.chip.soft {
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.6), rgba(148, 163, 184, 0.2));
+  box-shadow: none;
 }
 
-.swatch.satellite {
-  background: linear-gradient(135deg, #1f5133, #2f855a);
-}
-
-.swatch.vintage {
-  background: linear-gradient(135deg, #d8c6a3, #b68b60);
-}
-
-.globe {
+.globe-area {
   position: relative;
-  height: 640px;
-  border-radius: 20px;
+  width: 100%;
+  min-height: 65vh;
+  display: grid;
+}
+
+.globe-shell {
+  position: relative;
+  width: 100%;
+  height: min(72vh, 720px);
+  min-height: 520px;
+  border-radius: 22px;
+  overflow: hidden;
   background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.08), transparent 40%),
     radial-gradient(circle at 70% 60%, rgba(80, 148, 255, 0.12), transparent 45%),
     rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  overflow: visible;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
-}
-
-.globe::after {
-  content: '';
-  position: absolute;
-  inset: 10%;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.2), transparent 55%);
-  filter: blur(50px);
-  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45);
 }
 
 .globe-gl-root {
   position: absolute;
-  inset: -10%;
+  inset: 0;
   display: grid;
   place-items: center;
   pointer-events: none;
@@ -154,22 +183,6 @@ header p {
   transition: filter 200ms ease;
 }
 
-.globe-gl-surface {
-  filter: saturate(1.05) contrast(1.02);
-}
-
-.globe-gl-bump {
-  mix-blend-mode: soft-light;
-  opacity: 0.35;
-  filter: blur(0.3px) brightness(1.1);
-}
-
-.globe-gl-clouds {
-  mix-blend-mode: screen;
-  opacity: 0.18;
-  filter: blur(1px) contrast(1.05);
-}
-
 .globe-gl-halo {
   position: absolute;
   inset: 0;
@@ -179,6 +192,12 @@ header p {
   filter: blur(4px);
   pointer-events: none;
   transition: opacity 240ms ease, transform 240ms ease;
+}
+
+.hex-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
 }
 
 .loading {
@@ -191,12 +210,13 @@ header p {
   background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
 }
 
-@media (max-width: 900px) {
-  .content {
+@media (max-width: 960px) {
+  .hero {
     grid-template-columns: 1fr;
   }
 
-  .globe {
-    height: 480px;
+  .globe-shell {
+    height: 70vh;
+    min-height: 480px;
   }
 }
