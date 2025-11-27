@@ -322,6 +322,8 @@ const buildCountryTimeline = (trips) => {
 function App() {
   const containerRef = useRef(null)
   const svgRef = useRef(null)
+  const zoomBehaviorRef = useRef(null)
+  const lastTransformRef = useRef(null)
   const [libs, setLibs] = useState(null)
   const [geographies, setGeographies] = useState(null)
   const [status, setStatus] = useState('booting')
@@ -422,6 +424,8 @@ function App() {
     const width = container.clientWidth
     const height = Math.max(520, Math.round(width * 0.55))
 
+    const existingTransform = lastTransformRef.current ?? d3.zoomTransform(svg.node())
+
     svg.attr('viewBox', `0 0 ${width} ${height}`)
     svg.selectAll('*').remove()
 
@@ -430,14 +434,19 @@ function App() {
     const path = d3.geoPath(projection)
     const graticule = d3.geoGraticule10()
 
-    const zoomBehavior = d3
-      .zoom()
-      .scaleExtent([1, 8])
-      .on('zoom', (event) => {
-        zoomLayer.attr('transform', event.transform)
-      })
+    const zoomBehavior =
+      zoomBehaviorRef.current ||
+      d3
+        .zoom()
+        .scaleExtent([1, 8])
+        .on('zoom', (event) => {
+          zoomLayer.attr('transform', event.transform)
+          lastTransformRef.current = event.transform
+        })
 
-    svg.call(zoomBehavior)
+    zoomBehaviorRef.current = zoomBehavior
+
+    svg.call(zoomBehavior).call(zoomBehavior.transform, existingTransform)
 
     zoomLayer
       .append('path')
