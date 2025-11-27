@@ -291,32 +291,16 @@ const buildVisitCounts = (segments) => {
   return Array.from(visitMap.values())
 }
 
-const buildCountryTimeline = (trips) => {
-  const tripStartDates = new Map()
+const normalizeCountryName = (name) => {
+  if (!name) return 'Unknown'
 
-  trips.forEach((trip) => {
-    const start = new Date(
-      trip.itinerary.reduce((min, leg) => {
-        const legDate = new Date(leg.date)
-        return legDate.getTime() < min ? legDate.getTime() : min
-      }, new Date(trip.itinerary[0].date).getTime()),
-    )
-    tripStartDates.set(trip.tripName, start)
-  })
+  const normalized = name.toLowerCase().replace(/\./g, '').trim()
 
-  const countryMap = new Map()
+  if (normalized === 'fr guiana' || normalized === 'french guiana' || normalized === 'french guinea') {
+    return 'French Guinea'
+  }
 
-  trips.forEach((trip) => {
-    const firstVisited = tripStartDates.get(trip.tripName)
-    trip.countries.forEach((country) => {
-      const existing = countryMap.get(country)
-      if (!existing || firstVisited < existing.firstVisited) {
-        countryMap.set(country, { color: trip.color, firstVisited, tripName: trip.tripName })
-      }
-    })
-  })
-
-  return countryMap
+  return name
 }
 
 function App() {
@@ -336,8 +320,6 @@ function App() {
 
   const segments = useMemo(() => buildSegments(TRIPS), [])
   const visits = useMemo(() => buildVisitCounts(segments), [segments])
-  const countryTimeline = useMemo(() => buildCountryTimeline(TRIPS), [])
-
   const timeExtent = useMemo(() => {
     if (!segments.length) return null
     const start = segments[0].date
@@ -378,6 +360,29 @@ function App() {
         .filter((visit) => (selectedTrip === 'all' ? true : visit.trips.has(selectedTrip))),
     [currentDate, selectedTrip, visits],
   )
+
+  const countryVisits = useMemo(() => {
+    if (!libs || !geographies) return new Map()
+
+    const byCountry = new Map()
+    const visitsByDate = [...filteredVisits].sort((a, b) => a.lastDate.getTime() - b.lastDate.getTime())
+
+    geographies.countries.features.forEach((country) => {
+      const name = normalizeCountryName(country.properties?.name ?? country.id)
+
+      visitsByDate.forEach((visit) => {
+        if (!Number.isFinite(visit.lat) || !Number.isFinite(visit.lon)) return
+        if (!libs.d3.geoContains(country, [visit.lon, visit.lat])) return
+
+        const existing = byCountry.get(name)
+        if (!existing || visit.lastDate < existing.firstVisited) {
+          byCountry.set(name, { color: visit.color, firstVisited: visit.lastDate })
+        }
+      })
+    })
+
+    return byCountry
+  }, [filteredVisits, geographies, libs])
 
   const stateVisits = useMemo(() => {
     if (!libs || !geographies) return new Map()
@@ -487,14 +492,14 @@ function App() {
       .attr('fill', (d) => {
         if (d.properties?.name === 'United States of America') return 'rgba(255,255,255,0.04)'
 
-        const entry = countryTimeline.get(d.properties?.name)
+        const entry = countryVisits.get(normalizeCountryName(d.properties?.name ?? d.id))
         if (!entry || entry.firstVisited > currentDate) return 'rgba(255,255,255,0.04)'
         return withOpacity(entry.color, 0.5)
       })
       .attr('stroke', 'rgba(255,255,255,0.18)')
       .attr('stroke-width', 0.35)
       .on('mouseenter', (_, feature) =>
-        setHoveredRegion({ type: 'Country', name: feature.properties?.name ?? 'Unknown' }),
+        setHoveredRegion({ type: 'Country', name: normalizeCountryName(feature.properties?.name ?? 'Unknown') }),
       )
       .on('mouseleave', () => setHoveredRegion(null))
 
@@ -572,7 +577,7 @@ function App() {
       .attr('stroke-width', 0.5)
       .append('title')
       .text((visit) => `${visit.label || 'Stop'} · ${visit.visits} visit(s)\n${Array.from(visit.trips).join(', ')}`)
-  }, [libs, geographies, currentDate, timedSegments, filteredVisits, countryTimeline, stateVisits])
+  }, [libs, geographies, currentDate, timedSegments, filteredVisits, countryVisits, stateVisits])
 
   useEffect(() => {
     if (!isPlaying || !timeExtent) return () => {}
