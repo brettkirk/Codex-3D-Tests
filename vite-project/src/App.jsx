@@ -379,6 +379,29 @@ function App() {
     [currentDate, selectedTrip, visits],
   )
 
+  const stateVisits = useMemo(() => {
+    if (!libs || !geographies) return new Map()
+
+    const byState = new Map()
+
+    const visitsByDate = [...filteredVisits].sort((a, b) => a.lastDate.getTime() - b.lastDate.getTime())
+
+    geographies.states.features.forEach((state) => {
+      const name = state.properties?.name ?? state.id
+      visitsByDate.forEach((visit) => {
+        if (!Number.isFinite(visit.lat) || !Number.isFinite(visit.lon)) return
+        if (!libs.d3.geoContains(state, [visit.lon, visit.lat])) return
+
+        const existing = byState.get(name)
+        if (!existing || visit.lastDate < existing.firstVisited) {
+          byState.set(name, { color: visit.color, firstVisited: visit.lastDate })
+        }
+      })
+    })
+
+    return byState
+  }, [filteredVisits, geographies, libs])
+
   useEffect(() => {
     let cancelled = false
     const load = async () => {
@@ -462,6 +485,8 @@ function App() {
       .join('path')
       .attr('d', path)
       .attr('fill', (d) => {
+        if (d.properties?.name === 'United States of America') return 'rgba(255,255,255,0.04)'
+
         const entry = countryTimeline.get(d.properties?.name)
         if (!entry || entry.firstVisited > currentDate) return 'rgba(255,255,255,0.04)'
         return withOpacity(entry.color, 0.5)
@@ -485,7 +510,12 @@ function App() {
       .data(geographies.states.features)
       .join('path')
       .attr('d', path)
-      .attr('fill', 'transparent')
+      .attr('fill', (feature) => {
+        const name = feature.properties?.name ?? feature.id
+        const entry = stateVisits.get(name)
+        if (!entry || entry.firstVisited > currentDate) return 'rgba(255,255,255,0.02)'
+        return withOpacity(entry.color, 0.55)
+      })
       .attr('stroke', 'rgba(255,255,255,0.22)')
       .attr('stroke-width', 0.3)
       .on('mouseenter', (_, feature) =>
@@ -542,7 +572,7 @@ function App() {
       .attr('stroke-width', 0.5)
       .append('title')
       .text((visit) => `${visit.label || 'Stop'} · ${visit.visits} visit(s)\n${Array.from(visit.trips).join(', ')}`)
-  }, [libs, geographies, currentDate, timedSegments, filteredVisits, countryTimeline])
+  }, [libs, geographies, currentDate, timedSegments, filteredVisits, countryTimeline, stateVisits])
 
   useEffect(() => {
     if (!isPlaying || !timeExtent) return () => {}
@@ -647,7 +677,7 @@ function App() {
               <span className="swatch" />
               <div>
                 <strong>Highlighted regions</strong>
-                <p>Countries are softly tinted with the color of the trip they belong to. States are wired for future zooming.</p>
+                <p>Countries are softly tinted with the color of the trip they belong to, while U.S. states light up individually as they are visited.</p>
               </div>
             </div>
             <div className="legend-row">
