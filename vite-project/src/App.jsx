@@ -789,6 +789,148 @@ const TRIPS = [
         type: "flight"
       }
     ]
+  },
+  {
+    tripName: "Stan and Taylor's Wedding",
+    color: '#D97706', // placeholder
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) Flight SEA -> BZN
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Bozeman Yellowstone International Airport (BZN)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 45.7769,
+        lonTo: -111.1530,
+        date: '2022-07-29T14:13:00Z', // 7:13 AM PDT
+        duration: 165, // 2h 45m
+        type: 'flight'
+      },
+
+      // 2) Stay in Lewistown, MT (hotel / house stay)
+      {
+        airportFrom: 'Lewistown, Montana',
+        airportTo: 'Lewistown, Montana',
+        latFrom: 47.0622,
+        lonFrom: -109.4282,
+        latTo: 47.0622,
+        lonTo: -109.4282,
+        date: '2022-07-29T21:00:00Z', // 3:00 PM MDT
+        duration: 4140, // from afternoon 7/29 → departure afternoon 8/1
+        type: 'stay'
+      },
+
+      // 3) Flight BZN -> SEA
+      {
+        airportFrom: 'Bozeman Yellowstone International Airport (BZN)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 45.7769,
+        lonFrom: -111.1530,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2022-08-01T20:20:00Z', // 2:20 PM MDT
+        duration: 130, // 2h 10m
+        type: 'flight'
+      }
+    ]
+  },
+  {
+    tripName: 'Justin Trip',
+    color: '#10B981', // placeholder
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) Flight SEA -> SMF
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6951,
+        lonTo: -121.5908,
+        date: '2025-10-30T14:45:00Z', // 7:45 AM PDT
+        duration: 120,
+        type: 'flight'
+      },
+
+      // 2) Stay in Folsom, CA (Oct 30 → Oct 31)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2025-10-30T22:00:00Z', // 3 PM PDT check-in
+        duration: 1200, // until 11 AM 10/31
+        type: 'stay'
+      },
+
+      // 3) Drive Folsom → Walnut Creek (Nov 1, 10 AM → 12 PM)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Walnut Creek, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 37.9101,
+        lonTo: -122.0652,
+        date: '2025-11-01T17:00:00Z', // 10 AM PDT
+        duration: 120, // 2 hr
+        type: 'car'
+      },
+
+      // 4) Drive Walnut Creek → Paso Robles (1 PM → 5:30 PM)
+      {
+        airportFrom: 'Walnut Creek, California',
+        airportTo: 'Paso Robles, California',
+        latFrom: 37.9101,
+        lonFrom: -122.0652,
+        latTo: 35.6266,
+        lonTo: -120.6910,
+        date: '2025-11-01T20:00:00Z', // 1 PM PDT
+        duration: 270, // 4 hr 30 min
+        type: 'car'
+      },
+
+      // 5) Stay in Paso Robles (Nov 1 → Nov 2)
+      {
+        airportFrom: 'Paso Robles, California',
+        airportTo: 'Paso Robles, California',
+        latFrom: 35.6266,
+        lonFrom: -120.6910,
+        latTo: 35.6266,
+        lonTo: -120.6910,
+        date: '2025-11-01T22:00:00Z', // ~3 PM local (after drive)
+        duration: 1455, // until ~5 PM 11/2 (departure)
+        type: 'stay'
+      },
+
+      // 6) Drive Paso Robles → Folsom (Nov 2, ~5 PM → ~11 PM)
+      {
+        airportFrom: 'Paso Robles, California',
+        airportTo: 'Folsom, California',
+        latFrom: 35.6266,
+        lonFrom: -120.6910,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2025-11-02T00:00:00Z', // 5 PM PDT
+        duration: 360, // 6 hr
+        type: 'car'
+      },
+
+      // 7) Flight SMF -> SEA (Nov 3, 5 PM, 2-hour flight)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6951,
+        lonFrom: -121.5908,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2025-11-04T01:00:00Z', // 5 PM PDT
+        duration: 120,
+        type: 'flight'
+      }
+    ]
   }
 ]
 
