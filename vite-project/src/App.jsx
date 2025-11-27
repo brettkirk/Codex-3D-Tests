@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
 const MAP_ENDPOINTS = {
-  world: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json',
+  // Use the higher-resolution 50m dataset so microstates like Singapore and territories like French Guiana render correctly.
+  world: 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json',
   states: 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json',
 }
 
