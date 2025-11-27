@@ -654,6 +654,14 @@ const buildVisitCounts = (segments) => {
   return Array.from(visitMap.values())
 }
 
+const isTerritory = (feature) => {
+  const type = feature.properties?.type?.toLowerCase()
+  if (type === 'dependency' || type === 'territory') return true
+
+  const status = feature.properties?.status?.toLowerCase()
+  return status === 'dependency' || status === 'territory'
+}
+
 const normalizeCountryName = (name) => {
   if (!name) return 'Unknown'
 
@@ -903,7 +911,11 @@ function App() {
         if (d.properties?.name === 'United States of America') return 'rgba(255,255,255,0.04)'
 
         const entry = countryVisits.get(normalizeCountryName(d.properties?.name ?? d.id))
-        if (!entry || entry.firstVisited > currentDate) return 'rgba(255,255,255,0.04)'
+        const visited = entry && entry.firstVisited <= currentDate
+
+        if (!visited && isTerritory(d)) return 'rgba(0,0,0,0)'
+        if (!visited) return 'rgba(255,255,255,0.04)'
+
         return withOpacity(entry.color, 0.5)
       })
       .attr('stroke', 'rgba(255,255,255,0.18)')
