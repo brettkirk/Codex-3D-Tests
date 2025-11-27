@@ -591,21 +591,33 @@ const buildVisitCounts = (segments) => {
   const register = (lat, lon, label, tripName, color, date) => {
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) return
     const key = `${lat.toFixed(3)},${lon.toFixed(3)}`
-    const entry = visitMap.get(key) || {
-      lat,
-      lon,
-      label,
-      trips: new Set(),
-      color,
-      visits: 0,
-      firstDate: date,
-      lastDate: date,
+    const entry = visitMap.get(key)
+
+    if (!entry) {
+      visitMap.set(key, {
+        lat,
+        lon,
+        label,
+        trips: new Set([tripName]),
+        color,
+        visits: 1,
+        firstDate: date,
+        lastDate: date,
+      })
+      return
     }
+
+    const isEarlier = date < entry.firstDate
+
     entry.visits += 1
     entry.trips.add(tripName)
-    entry.color = color || entry.color
-    entry.firstDate = date < entry.firstDate ? date : entry.firstDate
+    entry.firstDate = isEarlier ? date : entry.firstDate
     entry.lastDate = date > entry.lastDate ? date : entry.lastDate
+
+    if ((isEarlier || !entry.color) && color) {
+      entry.color = color
+    }
+
     visitMap.set(key, entry)
   }
 
