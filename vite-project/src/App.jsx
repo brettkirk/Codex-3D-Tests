@@ -234,6 +234,18 @@ const buildSegments = (trips) => {
   return segments.sort((a, b) => a.date.getTime() - b.date.getTime())
 }
 
+const withOpacity = (hexColor, alpha = 0.5) => {
+  if (!hexColor?.startsWith('#') || (hexColor.length !== 7 && hexColor.length !== 4)) return hexColor
+
+  const expandHex = (color) => (color.length === 4 ? `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}` : color)
+  const color = expandHex(hexColor)
+  const r = parseInt(color.slice(1, 3), 16)
+  const g = parseInt(color.slice(3, 5), 16)
+  const b = parseInt(color.slice(5, 7), 16)
+
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`
+}
+
 const buildVisitCounts = (segments) => {
   const visitMap = new Map()
   const register = (lat, lon, label, tripName, color, date) => {
@@ -263,6 +275,34 @@ const buildVisitCounts = (segments) => {
   return Array.from(visitMap.values())
 }
 
+const buildCountryTimeline = (trips) => {
+  const tripStartDates = new Map()
+
+  trips.forEach((trip) => {
+    const start = new Date(
+      trip.itinerary.reduce((min, leg) => {
+        const legDate = new Date(leg.date)
+        return legDate.getTime() < min ? legDate.getTime() : min
+      }, new Date(trip.itinerary[0].date).getTime()),
+    )
+    tripStartDates.set(trip.tripName, start)
+  })
+
+  const countryMap = new Map()
+
+  trips.forEach((trip) => {
+    const firstVisited = tripStartDates.get(trip.tripName)
+    trip.countries.forEach((country) => {
+      const existing = countryMap.get(country)
+      if (!existing || firstVisited < existing.firstVisited) {
+        countryMap.set(country, { color: trip.color, firstVisited, tripName: trip.tripName })
+      }
+    })
+  })
+
+  return countryMap
+}
+
 function App() {
   const containerRef = useRef(null)
   const svgRef = useRef(null)
@@ -275,6 +315,7 @@ function App() {
 
   const segments = useMemo(() => buildSegments(TRIPS), [])
   const visits = useMemo(() => buildVisitCounts(segments), [segments])
+  const countryTimeline = useMemo(() => buildCountryTimeline(TRIPS), [])
 
   const timeExtent = useMemo(() => {
     if (!segments.length) return null
@@ -288,14 +329,6 @@ function App() {
     const next = min.getTime() + (range * sliderValue) / 100
     return new Date(next)
   }, [sliderValue, timeExtent])
-
-  const visitedCountries = useMemo(() => {
-    const map = new Map()
-    TRIPS.forEach((trip) => {
-      trip.countries.forEach((country) => map.set(country, trip.color))
-    })
-    return map
-  }, [])
 
   const filteredSegments = useMemo(
     () =>
@@ -398,7 +431,11 @@ function App() {
       .data(geographies.countries.features)
       .join('path')
       .attr('d', path)
-      .attr('fill', (d) => visitedCountries.get(d.properties?.name) || 'rgba(255,255,255,0.04)')
+      .attr('fill', (d) => {
+        const entry = countryTimeline.get(d.properties?.name)
+        if (!entry || entry.firstVisited > currentDate) return 'rgba(255,255,255,0.04)'
+        return withOpacity(entry.color, 0.5)
+      })
       .attr('stroke', 'rgba(255,255,255,0.18)')
       .attr('stroke-width', 0.35)
       .on('mouseenter', (_, feature) =>
@@ -466,7 +503,7 @@ function App() {
       .attr('stroke-width', 0.5)
       .append('title')
       .text((visit) => `${visit.label || 'Stop'} · ${visit.visits} visit(s)\n${Array.from(visit.trips).join(', ')}`)
-  }, [libs, geographies, currentDate, filteredSegments, filteredVisits, visitedCountries])
+  }, [libs, geographies, currentDate, filteredSegments, filteredVisits, countryTimeline])
 
   const heroSummary = useMemo(() => {
     if (!timeExtent) return ''
