@@ -469,6 +469,8 @@ function App() {
       return 2.5
     }
 
+    const zoomSizeAdjustment = (k = 1) => Math.pow(k, 0.6)
+
     let markerSelection = null
     let routeSelection = null
 
@@ -477,12 +479,14 @@ function App() {
       zoomLayer.attr('transform', event.transform)
       lastTransformRef.current = event.transform
 
+      const zoomFactor = zoomSizeAdjustment(event.transform.k)
+
       if (routeSelection) {
-        routeSelection.attr('stroke-width', (segment) => routeWidth(segment) / event.transform.k)
+        routeSelection.attr('stroke-width', (segment) => routeWidth(segment) / zoomFactor)
       }
 
       if (markerSelection) {
-        markerSelection.attr('r', (visit) => markerRadius(visit) / event.transform.k)
+        markerSelection.attr('r', (visit) => markerRadius(visit) / zoomFactor)
       }
     })
 
@@ -571,8 +575,10 @@ function App() {
       })
       .attr('class', (segment) => `route route-${segment.type}`)
       .attr('stroke', (segment) => segment.color)
-      .attr('stroke-width', (segment) => routeWidth(segment) / (lastTransformRef.current?.k ?? 1))
+      .attr('stroke-width', (segment) => routeWidth(segment) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
       .attr('stroke-dasharray', (segment) => TRANSPORT_STYLES[segment.type]?.strokeDasharray || '0')
+
+    routeSelection
       .append('title')
       .text(
         (segment) =>
@@ -589,11 +595,13 @@ function App() {
         const [x, y] = projection([visit.lon, visit.lat])
         return `translate(${x}, ${y})`
       })
-      .attr('r', (visit) => markerRadius(visit) / (lastTransformRef.current?.k ?? 1))
+      .attr('r', (visit) => markerRadius(visit) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
       .attr('fill', (visit) => visit.color)
       .attr('fill-opacity', 0.82)
       .attr('stroke', 'rgba(0,0,0,0.45)')
       .attr('stroke-width', 0.5)
+
+    markerSelection
       .append('title')
       .text((visit) => `${visit.label || 'Stop'} · ${visit.visits} visit(s)\n${Array.from(visit.trips).join(', ')}`)
   }, [libs, geographies, currentDate, timedSegments, filteredVisits, countryVisits, stateVisits])
