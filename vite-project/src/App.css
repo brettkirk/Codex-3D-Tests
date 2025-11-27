@@ -273,10 +273,6 @@ select {
   transition: transform 160ms ease, r 160ms ease;
 }
 
-.markers circle:hover {
-  transform: scale(1.1);
-}
-
 @media (max-width: 1080px) {
   .hero {
     grid-template-columns: 1fr;

@@ -189,9 +189,340 @@ const TRIPS = [
         date: '2023-04-02T13:50:00Z', // 2 Apr 2023, 14:50 IST
         duration: 610, // until ~5:00 PM PDT (3 Apr 00:00Z)
         type: 'flight',
-      },
-    ],
+      }
+    ]
   },
+  {
+    tripName: "Round the world in 18 days 2026",
+    color: "#E53E3E", // placeholder, can change later
+    countries: ['United States of America', 'Spain', 'Portugal', 'Turkey', 'Vietnam', 'Singapore', 'Taiwan'],
+    itinerary: [
+      // 1) Flight SEA -> ORD
+      {
+        airportFrom: "Seattle–Tacoma International Airport (SEA)",
+        airportTo: "Chicago O'Hare International Airport (ORD)",
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 41.978611,
+        lonTo: -87.904724,
+        date: "2026-04-01T18:45:00Z",
+        duration: 248, // 4h 08m
+        type: "flight"
+      },
+
+      // 2) Layover ORD
+      {
+        airportFrom: "Chicago O'Hare International Airport (ORD)",
+        airportTo: "Chicago O'Hare International Airport (ORD)",
+        latFrom: 41.978611,
+        lonFrom: -87.904724,
+        latTo: 41.978611,
+        lonTo: -87.904724,
+        date: "2026-04-01T22:53:00Z",
+        duration: 267, // until 22:20 local (ORD>MAD dep)
+        type: "layover"
+      },
+
+      // 3) Flight ORD -> MAD
+      {
+        airportFrom: "Chicago O'Hare International Airport (ORD)",
+        airportTo: "Adolfo Suárez Madrid–Barajas Airport (MAD)",
+        latFrom: 41.978611,
+        lonFrom: -87.904724,
+        latTo: 40.4839,
+        lonTo: -3.5680,
+        date: "2026-04-02T03:20:00Z",
+        duration: 485, // 10h 05m
+        type: "flight"
+      },
+
+      // 4) Layover MAD
+      {
+        airportFrom: "Adolfo Suárez Madrid–Barajas Airport (MAD)",
+        airportTo: "Adolfo Suárez Madrid–Barajas Airport (MAD)",
+        latFrom: 40.4839,
+        lonFrom: -3.5680,
+        latTo: 40.4839,
+        lonTo: -3.5680,
+        date: "2026-04-02T11:25:00Z",
+        duration: 135, // until 15:40 local
+        type: "layover"
+      },
+
+      // 5) Flight MAD -> OPO (Porto)
+      {
+        airportFrom: "Adolfo Suárez Madrid–Barajas Airport (MAD)",
+        airportTo: "Francisco Sá Carneiro Airport (OPO)",
+        latFrom: 40.4839,
+        lonFrom: -3.5680,
+        latTo: 41.2422,
+        lonTo: -8.6755,
+        date: "2026-04-02T13:40:00Z",
+        duration: 800, // 13h 20m, arrives ~04:00 local next day
+        type: "flight"
+      },
+
+      // 6) Porto hotel stay (arrival early morning -> embarkation)
+      {
+        airportFrom: "Porto (city hotel)",
+        airportTo: "Porto (city hotel)",
+        latFrom: 41.1496,
+        lonFrom: -8.61099,
+        latTo: 41.1496,
+        lonTo: -8.61099,
+        date: "2026-04-03T03:00:00Z", // ~04:00 local 4/3
+        duration: 480, // until 12:00 local (embarkation)
+        type: "stay"
+      },
+
+      // 7) Embarkation in Porto -> cruise begins (Porto -> Régua leg)
+      {
+        airportFrom: "Porto, Portugal (Douro cruise embarkation)",
+        airportTo: "Régua, Portugal",
+        latFrom: 41.1496,
+        lonFrom: -8.61099,
+        latTo: 41.1649,
+        lonTo: -7.7870,
+        date: "2026-04-03T11:00:00Z", // 12:00 local
+        duration: 1260, // to next morning in Régua
+        type: "cruise"
+      },
+
+      // 8) Régua day (Régua -> Vega de Terrón leg overnight)
+      {
+        airportFrom: "Régua, Portugal",
+        airportTo: "Vega de Terrón, Spain",
+        latFrom: 41.1649,
+        lonFrom: -7.7870,
+        latTo: 41.0280,
+        lonTo: -6.9310,
+        date: "2026-04-04T08:00:00Z", // ~09:00 local
+        duration: 1440, // 1 day to next entry
+        type: "cruise"
+      },
+
+      // 9) Vega de Terrón (port day, then move/continue)
+      {
+        airportFrom: "Vega de Terrón, Spain",
+        airportTo: "Vega de Terrón, Spain",
+        latFrom: 41.0280,
+        lonFrom: -6.9310,
+        latTo: 41.0280,
+        lonTo: -6.9310,
+        date: "2026-04-05T08:00:00Z",
+        duration: 1440, // until 4/6 09:00 local
+        type: "cruise"
+      },
+
+      // 10) Vega de Terrón second day
+      {
+        airportFrom: "Vega de Terrón, Spain",
+        airportTo: "Pinhão, Portugal",
+        latFrom: 41.0280,
+        lonFrom: -6.9310,
+        latTo: 41.187492,
+        lonTo: -7.532848,
+        date: "2026-04-06T08:00:00Z",
+        duration: 1440,
+        type: "cruise"
+      },
+
+      // 11) Pinhão day
+      {
+        airportFrom: "Pinhão, Portugal",
+        airportTo: "Régua, Portugal",
+        latFrom: 41.187492,
+        lonFrom: -7.532848,
+        latTo: 41.1649,
+        lonTo: -7.7870,
+        date: "2026-04-07T08:00:00Z",
+        duration: 1440,
+        type: "cruise"
+      },
+
+      // 12) Régua again
+      {
+        airportFrom: "Régua, Portugal",
+        airportTo: "Régua, Portugal",
+        latFrom: 41.1649,
+        lonFrom: -7.7870,
+        latTo: 41.1649,
+        lonTo: -7.7870,
+        date: "2026-04-08T08:00:00Z",
+        duration: 1440,
+        type: "cruise"
+      },
+
+      // 13) Régua (last full day before Porto)
+      {
+        airportFrom: "Régua, Portugal",
+        airportTo: "Porto, Portugal",
+        latFrom: 41.1649,
+        lonFrom: -7.7870,
+        latTo: 41.1496,
+        lonTo: -8.61099,
+        date: "2026-04-09T08:00:00Z",
+        duration: 1440,
+        type: "cruise"
+      },
+
+      // 14) Disembarkation in Porto (morning -> later flight)
+      {
+        airportFrom: "Porto, Portugal (disembarkation)",
+        airportTo: "Porto, Portugal (city/port)",
+        latFrom: 41.1496,
+        lonFrom: -8.61099,
+        latTo: 41.1496,
+        lonTo: -8.61099,
+        date: "2026-04-10T08:00:00Z", // ~09:00 local
+        duration: 460, // until 16:40 local flight departure
+        type: "cruise"
+      },
+
+      // 15) Flight OPO -> IST
+      {
+        airportFrom: "Francisco Sá Carneiro Airport (OPO)",
+        airportTo: "Istanbul Airport (IST)",
+        latFrom: 41.2422,
+        lonFrom: -8.6755,
+        latTo: 41.276901,
+        lonTo: 28.729324,
+        date: "2026-04-10T15:40:00Z",
+        duration: 280, // 4h 40m
+        type: "flight"
+      },
+
+      // 16) Layover IST
+      {
+        airportFrom: "Istanbul Airport (IST)",
+        airportTo: "Istanbul Airport (IST)",
+        latFrom: 41.276901,
+        lonFrom: 28.729324,
+        latTo: 41.276901,
+        lonTo: 28.729324,
+        date: "2026-04-10T20:20:00Z",
+        duration: 150, // to 01:50 local
+        type: "layover"
+      },
+
+      // 17) Flight IST -> SGN
+      {
+        airportFrom: "Istanbul Airport (IST)",
+        airportTo: "Tan Son Nhat International Airport (SGN)",
+        latFrom: 41.276901,
+        lonFrom: 28.729324,
+        latTo: 10.818889,
+        lonTo: 106.651944,
+        date: "2026-04-10T22:50:00Z",
+        duration: 620, // 10h 20m
+        type: "flight"
+      },
+
+      // 18) Layover SGN
+      {
+        airportFrom: "Tan Son Nhat International Airport (SGN)",
+        airportTo: "Tan Son Nhat International Airport (SGN)",
+        latFrom: 10.818889,
+        lonFrom: 106.651944,
+        latTo: 10.818889,
+        lonTo: 106.651944,
+        date: "2026-04-11T09:10:00Z",
+        duration: 275, // to 20:45 local
+        type: "layover"
+      },
+
+      // 19) Flight SGN -> DAD
+      {
+        airportFrom: "Tan Son Nhat International Airport (SGN)",
+        airportTo: "Da Nang International Airport (DAD)",
+        latFrom: 10.818889,
+        lonFrom: 106.651944,
+        latTo: 16.0439,
+        lonTo: 108.1990,
+        date: "2026-04-11T13:45:00Z",
+        duration: 85, // 1h 25m
+        type: "flight"
+      },
+
+      // 20) Pullman Danang stay
+      {
+        airportFrom: "Pullman Danang Beach Resort (Da Nang)",
+        airportTo: "Pullman Danang Beach Resort (Da Nang)",
+        latFrom: 16.040022,
+        lonFrom: 108.249353,
+        latTo: 16.040022,
+        lonTo: 108.249353,
+        date: "2026-04-11T15:10:00Z", // shortly after landing/check-in
+        duration: 6585, // until DAD>SIN departure 4/16
+        type: "stay"
+      },
+
+      // 21) Flight DAD -> SIN
+      {
+        airportFrom: "Da Nang International Airport (DAD)",
+        airportTo: "Singapore Changi Airport (SIN)",
+        latFrom: 16.0439,
+        lonFrom: 108.1990,
+        latTo: 1.359167,
+        lonTo: 103.989441,
+        date: "2026-04-16T04:55:00Z",
+        duration: 180, // 3h
+        type: "flight"
+      },
+
+      // 22) Carlton City Hotel Singapore stay
+      {
+        airportFrom: "Carlton City Hotel Singapore",
+        airportTo: "Carlton City Hotel Singapore",
+        latFrom: 1.27597,
+        lonFrom: 103.84371,
+        latTo: 1.27597,
+        lonTo: 103.84371,
+        date: "2026-04-16T07:55:00Z", // arrival/check-in
+        duration: 2750, // until SIN>TPE departure 4/18
+        type: "stay"
+      },
+
+      // 23) Flight SIN -> TPE
+      {
+        airportFrom: "Singapore Changi Airport (SIN)",
+        airportTo: "Taiwan Taoyuan International Airport (TPE)",
+        latFrom: 1.359167,
+        lonFrom: 103.989441,
+        latTo: 25.0725,
+        lonTo: 121.2210,
+        date: "2026-04-18T05:45:00Z",
+        duration: 290, // 4h 50m
+        type: "flight"
+      },
+
+      // 24) Layover TPE
+      {
+        airportFrom: "Taiwan Taoyuan International Airport (TPE)",
+        airportTo: "Taiwan Taoyuan International Airport (TPE)",
+        latFrom: 25.0725,
+        lonFrom: 121.2210,
+        latTo: 25.0725,
+        lonTo: 121.2210,
+        date: "2026-04-18T10:35:00Z",
+        duration: 295, // to 23:30 local
+        type: "layover"
+      },
+
+      // 25) Flight TPE -> SEA
+      {
+        airportFrom: "Taiwan Taoyuan International Airport (TPE)",
+        airportTo: "Seattle–Tacoma International Airport (SEA)",
+        latFrom: 25.0725,
+        lonFrom: 121.2210,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: "2026-04-18T15:30:00Z",
+        duration: 660, // 11h
+        type: "flight"
+      }
+    ]
+  }
 ]
 
 const TRANSPORT_STYLES = {
