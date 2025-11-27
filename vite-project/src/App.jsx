@@ -665,6 +665,23 @@ function App() {
 
   const segments = useMemo(() => buildSegments(TRIPS), [])
   const visits = useMemo(() => buildVisitCounts(segments), [segments])
+
+  const visitsByTrip = useMemo(() => {
+    const byTrip = new Map()
+
+    TRIPS.forEach(({ tripName }) => {
+      byTrip.set(
+        tripName,
+        buildVisitCounts(
+          segments.filter((segment) => segment.tripName === tripName),
+        ),
+      )
+    })
+
+    byTrip.set('all', visits)
+
+    return byTrip
+  }, [segments, visits])
   const timeExtent = useMemo(() => {
     if (!segments.length) return null
     const start = segments[0].date
@@ -700,10 +717,10 @@ function App() {
 
   const filteredVisits = useMemo(
     () =>
-      visits
+      (visitsByTrip.get(selectedTrip) ?? visits)
         .filter((visit) => !currentDate || visit.firstDate.getTime() <= currentDate.getTime())
         .filter((visit) => (selectedTrip === 'all' ? true : visit.trips.has(selectedTrip))),
-    [currentDate, selectedTrip, visits],
+    [currentDate, selectedTrip, visits, visitsByTrip],
   )
 
   const countryVisits = useMemo(() => {
