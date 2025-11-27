@@ -682,15 +682,42 @@ function App() {
 
     return byTrip
   }, [segments, visits])
-  const timeExtent = useMemo(() => {
-    if (!segments.length) return null
-    const start = segments[0].date
-    const end = segments.reduce((latest, segment) => {
-      if (!segment.endDate) return latest
-      return segment.endDate > latest ? segment.endDate : latest
-    }, segments[segments.length - 1].endDate ?? segments[segments.length - 1].date)
-    return [start, end]
+  const timeExtentsByTrip = useMemo(() => {
+    const computeTimeExtent = (segmentList) => {
+      if (!segmentList.length) return null
+
+      return segmentList.reduce(
+        ([min, max], segment) => {
+          const start = segment.date
+          const end = segment.endDate ?? segment.date
+
+          const nextMin = start < min ? start : min
+          const nextMax = end > max ? end : max
+
+          return [nextMin, nextMax]
+        },
+        [segmentList[0].date, segmentList[0].endDate ?? segmentList[0].date],
+      )
+    }
+
+    const extents = new Map()
+
+    TRIPS.forEach(({ tripName }) => {
+      extents.set(
+        tripName,
+        computeTimeExtent(segments.filter((segment) => segment.tripName === tripName)),
+      )
+    })
+
+    extents.set('all', computeTimeExtent(segments))
+
+    return extents
   }, [segments])
+
+  const timeExtent = useMemo(
+    () => timeExtentsByTrip.get(selectedTrip) ?? timeExtentsByTrip.get('all'),
+    [selectedTrip, timeExtentsByTrip],
+  )
 
   const currentDate = useMemo(() => {
     if (!timeExtent) return null
