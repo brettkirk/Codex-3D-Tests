@@ -8,143 +8,184 @@ const MAP_ENDPOINTS = {
 
 const TRIPS = [
   {
-    tripName: 'Atlantic Sprint',
-    color: '#60a5fa',
-    countries: ['United States of America', 'United Kingdom', 'France', 'Netherlands'],
+    tripName: 'Europe Trip 2023',
+    color: '#4F46E5',
+    countries: ['United States of America', 'United Kingdom', 'France', 'Spain', 'Ireland'],
     itinerary: [
       {
-        airportFrom: 'JFK',
-        airportTo: 'LHR',
-        fromLat: 40.6413,
-        fromLon: -73.7781,
-        lat: 51.47,
-        lon: -0.4543,
-        date: '2024-05-12T14:00:00Z',
-        duration: 420,
+        airportFrom: 'Seattle-Tacoma International Airport (SEA)',
+        airportTo: 'London Heathrow Airport (LHR)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 51.47002,
+        lonTo: -0.454295,
+        date: '2023-03-19T02:35:00Z', // 18 Mar 2023, 7:35 PM PDT
+        duration: 555, // 9h 15m
         type: 'flight',
       },
       {
-        airportFrom: 'LHR',
-        airportTo: 'CDG',
-        fromLat: 51.47,
-        fromLon: -0.4543,
-        lat: 49.0097,
-        lon: 2.5479,
-        date: '2024-05-15T09:00:00Z',
-        duration: 80,
+        airportFrom: 'citizenM Tower of London (London)',
+        airportTo: 'citizenM Tower of London (London)',
+        latFrom: 51.50853,
+        lonFrom: -0.076132,
+        latTo: 51.50853,
+        lonTo: -0.076132,
+        date: '2023-03-19T15:00:00Z', // 19 Mar 2023, 15:00 GMT
+        duration: 3984, // until 22 Mar 2023, 09:24 GMT (train departure)
+        type: 'stay',
+      },
+      {
+        airportFrom: 'St Pancras International Station (London)',
+        airportTo: 'Gare du Nord (Paris)',
+        latFrom: 51.531891,
+        lonFrom: -0.126851,
+        latTo: 48.880948,
+        lonTo: 2.355314,
+        date: '2023-03-22T09:24:00Z', // 22 Mar 2023, 09:24 GMT
+        duration: 153, // 2h 33m
         type: 'train',
       },
       {
-        airportFrom: 'CDG',
-        airportTo: 'AMS',
-        fromLat: 49.0097,
-        fromLon: 2.5479,
-        lat: 52.3105,
-        lon: 4.7683,
-        date: '2024-05-18T08:30:00Z',
-        duration: 65,
-        type: 'flight',
+        airportFrom: 'citizenM Paris Gare de Lyon (Paris)',
+        airportTo: 'citizenM Paris Gare de Lyon (Paris)',
+        latFrom: 48.844806,
+        lonFrom: 2.373479,
+        latTo: 48.844806,
+        lonTo: 2.373479,
+        date: '2023-03-22T14:00:00Z', // 22 Mar 2023, 15:00 CET
+        duration: 1006, // until 23 Mar 2023, 07:46 CET (train departure)
+        type: 'stay',
       },
       {
-        airportFrom: 'AMS',
-        airportTo: 'JFK',
-        fromLat: 52.3105,
-        fromLon: 4.7683,
-        lat: 40.6413,
-        lon: -73.7781,
-        date: '2024-05-20T15:00:00Z',
-        duration: 510,
-        type: 'flight',
-      },
-    ],
-  },
-  {
-    tripName: 'Pacific Arcs',
-    color: '#f59e0b',
-    countries: ['United States of America', 'Japan', 'Australia', 'Singapore'],
-    itinerary: [
-      {
-        airportFrom: 'SFO',
-        airportTo: 'HND',
-        fromLat: 37.6213,
-        fromLon: -122.379,
-        lat: 35.5494,
-        lon: 139.7798,
-        date: '2025-02-02T17:30:00Z',
-        duration: 660,
-        type: 'flight',
-      },
-      {
-        airportFrom: 'HND',
-        airportTo: 'SYD',
-        fromLat: 35.5494,
-        fromLon: 139.7798,
-        lat: -33.8688,
-        lon: 151.2093,
-        date: '2025-02-08T04:00:00Z',
-        duration: 580,
-        type: 'flight',
-      },
-      {
-        airportFrom: 'SYD',
-        airportTo: 'SIN',
-        fromLat: -33.8688,
-        fromLon: 151.2093,
-        lat: 1.3644,
-        lon: 103.9915,
-        date: '2025-02-14T07:00:00Z',
-        duration: 480,
-        type: 'flight',
-      },
-      {
-        airportFrom: 'SIN',
-        airportTo: 'SFO',
-        fromLat: 1.3644,
-        fromLon: 103.9915,
-        lat: 37.6213,
-        lon: -122.379,
-        date: '2025-02-20T19:00:00Z',
-        duration: 940,
-        type: 'flight',
-      },
-    ],
-  },
-  {
-    tripName: 'Overland Expedition',
-    color: '#22c55e',
-    countries: ['United States of America', 'Canada'],
-    itinerary: [
-      {
-        airportFrom: 'DEN',
-        airportTo: 'GLA',
-        fromLat: 39.8561,
-        fromLon: -104.6737,
-        lat: 45.4215,
-        lon: -75.6972,
-        date: '2023-09-01T12:00:00Z',
-        duration: 60,
-        type: 'car',
-      },
-      {
-        airportFrom: 'GLA',
-        airportTo: 'YVR',
-        fromLat: 45.4215,
-        fromLon: -75.6972,
-        lat: 49.2827,
-        lon: -123.1207,
-        date: '2023-09-05T14:00:00Z',
-        duration: 300,
+        airportFrom: 'Gare de Lyon (Paris)',
+        airportTo: 'Lyon-Part-Dieu Station (Lyon)',
+        latFrom: 48.844806,
+        lonFrom: 2.373479,
+        latTo: 45.76056,
+        lonTo: 4.85944,
+        date: '2023-03-23T06:46:00Z', // 23 Mar 2023, 07:46 CET
+        duration: 149, // 2h 29m
         type: 'train',
       },
       {
-        airportFrom: 'YVR',
-        airportTo: 'DEN',
-        fromLat: 49.2827,
-        fromLon: -123.1207,
-        lat: 39.8561,
-        lon: -104.6737,
-        date: '2023-09-10T09:00:00Z',
-        duration: 180,
+        airportFrom: 'Lyon, France',
+        airportTo: 'Vienne, France',
+        latFrom: 45.764043,
+        lonFrom: 4.835659,
+        latTo: 45.525587,
+        lonTo: 4.874339,
+        date: '2023-03-25T08:00:00Z', // 25 Mar 2023, ~09:00 CET
+        duration: 2820, // until 27 Mar 2023, 09:00 CEST
+        type: 'cruise',
+      },
+      {
+        airportFrom: 'Vienne, France',
+        airportTo: 'Avignon, France',
+        latFrom: 45.525587,
+        lonFrom: 4.874339,
+        latTo: 43.949317,
+        lonTo: 4.805528,
+        date: '2023-03-27T07:00:00Z', // 27 Mar 2023, ~09:00 CEST
+        duration: 2220, // until 28 Mar 2023, 22:00 CEST
+        type: 'cruise',
+      },
+      {
+        airportFrom: 'Avignon, France',
+        airportTo: 'Arles, France',
+        latFrom: 43.949317,
+        lonFrom: 4.805528,
+        latTo: 43.676701,
+        lonTo: 4.6278,
+        date: '2023-03-28T20:00:00Z', // 28 Mar 2023, 22:00 CEST (overnight sail)
+        duration: 1970, // until 30 Mar 2023, 06:50 CEST
+        type: 'cruise',
+      },
+      {
+        airportFrom: "Gare d'Arles (Arles)",
+        airportTo: 'Marseille Provence Airport (MRS)',
+        latFrom: 43.68472,
+        lonFrom: 4.63194,
+        latTo: 43.439272,
+        lonTo: 5.221424,
+        date: '2023-03-30T04:50:00Z', // 30 Mar 2023, 06:50 CEST
+        duration: 164, // until MRS–CDG departure at 09:34 CEST
+        type: 'train',
+      },
+      {
+        airportFrom: 'Marseille Provence Airport (MRS)',
+        airportTo: 'Paris Charles de Gaulle Airport (CDG)',
+        latFrom: 43.439272,
+        lonFrom: 5.221424,
+        latTo: 49.0128,
+        lonTo: 2.55,
+        date: '2023-03-30T07:34:00Z', // 30 Mar 2023, 09:34 CEST
+        duration: 166, // until 12:20 CEST
+        type: 'flight',
+      },
+      {
+        airportFrom: 'Paris Charles de Gaulle Airport (CDG)',
+        airportTo: 'Paris Charles de Gaulle Airport (CDG)',
+        latFrom: 49.0128,
+        lonFrom: 2.55,
+        latTo: 49.0128,
+        lonTo: 2.55,
+        date: '2023-03-30T10:20:00Z', // 30 Mar 2023, 12:20 CEST
+        duration: 44, // layover until 13:04 CEST
+        type: 'layover',
+      },
+      {
+        airportFrom: 'Paris Charles de Gaulle Airport (CDG)',
+        airportTo: 'Josep Tarradellas Barcelona-El Prat Airport (BCN)',
+        latFrom: 49.0128,
+        lonFrom: 2.55,
+        latTo: 41.2971,
+        lonTo: 2.07846,
+        date: '2023-03-30T11:04:00Z', // 30 Mar 2023, 13:04 CEST
+        duration: 108, // until 14:52 CEST
+        type: 'flight',
+      },
+      {
+        airportFrom: 'Renaissance Barcelona Hotel (Barcelona)',
+        airportTo: 'Renaissance Barcelona Hotel (Barcelona)',
+        latFrom: 41.392789,
+        lonFrom: 2.167398,
+        latTo: 41.392789,
+        lonTo: 2.167398,
+        date: '2023-03-30T13:00:00Z', // 30 Mar 2023, 15:00 CEST
+        duration: 4080, // until 2 Apr 2023, 11:00 CEST
+        type: 'stay',
+      },
+      {
+        airportFrom: 'Josep Tarradellas Barcelona-El Prat Airport (BCN)',
+        airportTo: 'Dublin Airport (DUB)',
+        latFrom: 41.2971,
+        lonFrom: 2.07846,
+        latTo: 53.4287,
+        lonTo: -6.2621,
+        date: '2023-04-02T09:24:00Z', // 2 Apr 2023, 11:24 CEST
+        duration: 236, // until 14:20 IST
+        type: 'flight',
+      },
+      {
+        airportFrom: 'Dublin Airport (DUB)',
+        airportTo: 'Dublin Airport (DUB)',
+        latFrom: 53.4287,
+        lonFrom: -6.2621,
+        latTo: 53.4287,
+        lonTo: -6.2621,
+        date: '2023-04-02T13:20:00Z', // 2 Apr 2023, 14:20 IST
+        duration: 30, // layover until 14:50 IST
+        type: 'layover',
+      },
+      {
+        airportFrom: 'Dublin Airport (DUB)',
+        airportTo: 'Seattle-Tacoma International Airport (SEA)',
+        latFrom: 53.4287,
+        lonFrom: -6.2621,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2023-04-02T13:50:00Z', // 2 Apr 2023, 14:50 IST
+        duration: 610, // until ~5:00 PM PDT (3 Apr 00:00Z)
         type: 'flight',
       },
     ],
@@ -174,8 +215,11 @@ const buildSegments = (trips) => {
   trips.forEach((trip) => {
     let cursor = null
     trip.itinerary.forEach((leg) => {
-      const start = cursor || { lat: leg.fromLat ?? leg.lat, lon: leg.fromLon ?? leg.lon }
-      const end = { lat: leg.lat, lon: leg.lon }
+      const start = {
+        lat: leg.latFrom ?? cursor?.lat ?? leg.latTo,
+        lon: leg.lonFrom ?? cursor?.lon ?? leg.lonTo,
+      }
+      const end = { lat: leg.latTo ?? start.lat, lon: leg.lonTo ?? start.lon }
       segments.push({
         ...leg,
         tripName: trip.tripName,
@@ -323,21 +367,31 @@ function App() {
     svg.attr('viewBox', `0 0 ${width} ${height}`)
     svg.selectAll('*').remove()
 
+    const zoomLayer = svg.append('g').attr('class', 'zoom-layer')
     const projection = d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' })
     const path = d3.geoPath(projection)
     const graticule = d3.geoGraticule10()
 
-    svg
+    const zoomBehavior = d3
+      .zoom()
+      .scaleExtent([1, 8])
+      .on('zoom', (event) => {
+        zoomLayer.attr('transform', event.transform)
+      })
+
+    svg.call(zoomBehavior)
+
+    zoomLayer
       .append('path')
       .attr('class', 'map-outline')
       .attr('d', path({ type: 'Sphere' }))
 
-    svg
+    zoomLayer
       .append('path')
       .attr('class', 'graticule')
       .attr('d', path(graticule))
 
-    svg
+    zoomLayer
       .append('g')
       .attr('class', 'countries')
       .selectAll('path')
@@ -352,12 +406,12 @@ function App() {
       )
       .on('mouseleave', () => setHoveredRegion(null))
 
-    svg
+    zoomLayer
       .append('path')
       .attr('class', 'country-borders')
       .attr('d', path(geographies.countryMesh))
 
-    svg
+    zoomLayer
       .append('g')
       .attr('class', 'states')
       .selectAll('path')
@@ -372,12 +426,12 @@ function App() {
       )
       .on('mouseleave', () => setHoveredRegion(null))
 
-    svg
+    zoomLayer
       .append('path')
       .attr('class', 'state-borders')
       .attr('d', path(geographies.stateMesh))
 
-    svg
+    zoomLayer
       .append('g')
       .attr('class', 'routes')
       .selectAll('path')
@@ -395,7 +449,7 @@ function App() {
           `${segment.tripName}: ${segment.airportFrom} → ${segment.airportTo}\n${formatDate(segment.date)} · ${TRANSPORT_STYLES[segment.type]?.label || segment.type}`,
       )
 
-    svg
+    zoomLayer
       .append('g')
       .attr('class', 'markers')
       .selectAll('circle')
