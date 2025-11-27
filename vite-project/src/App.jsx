@@ -267,11 +267,13 @@ const buildVisitCounts = (segments) => {
       trips: new Set(),
       color,
       visits: 0,
+      firstDate: date,
       lastDate: date,
     }
     entry.visits += 1
     entry.trips.add(tripName)
     entry.color = color || entry.color
+    entry.firstDate = date < entry.firstDate ? date : entry.firstDate
     entry.lastDate = date > entry.lastDate ? date : entry.lastDate
     visitMap.set(key, entry)
   }
@@ -356,7 +358,7 @@ function App() {
   const filteredVisits = useMemo(
     () =>
       visits
-        .filter((visit) => !currentDate || visit.lastDate.getTime() <= currentDate.getTime())
+        .filter((visit) => !currentDate || visit.firstDate.getTime() <= currentDate.getTime())
         .filter((visit) => (selectedTrip === 'all' ? true : visit.trips.has(selectedTrip))),
     [currentDate, selectedTrip, visits],
   )
@@ -365,7 +367,7 @@ function App() {
     if (!libs || !geographies) return new Map()
 
     const byCountry = new Map()
-    const visitsByDate = [...filteredVisits].sort((a, b) => a.lastDate.getTime() - b.lastDate.getTime())
+    const visitsByDate = [...filteredVisits].sort((a, b) => a.firstDate.getTime() - b.firstDate.getTime())
 
     geographies.countries.features.forEach((country) => {
       const name = normalizeCountryName(country.properties?.name ?? country.id)
@@ -375,8 +377,8 @@ function App() {
         if (!libs.d3.geoContains(country, [visit.lon, visit.lat])) return
 
         const existing = byCountry.get(name)
-        if (!existing || visit.lastDate < existing.firstVisited) {
-          byCountry.set(name, { color: visit.color, firstVisited: visit.lastDate })
+        if (!existing || visit.firstDate < existing.firstVisited) {
+          byCountry.set(name, { color: visit.color, firstVisited: visit.firstDate })
         }
       })
     })
@@ -389,7 +391,7 @@ function App() {
 
     const byState = new Map()
 
-    const visitsByDate = [...filteredVisits].sort((a, b) => a.lastDate.getTime() - b.lastDate.getTime())
+    const visitsByDate = [...filteredVisits].sort((a, b) => a.firstDate.getTime() - b.firstDate.getTime())
 
     geographies.states.features.forEach((state) => {
       const name = state.properties?.name ?? state.id
@@ -398,8 +400,8 @@ function App() {
         if (!libs.d3.geoContains(state, [visit.lon, visit.lat])) return
 
         const existing = byState.get(name)
-        if (!existing || visit.lastDate < existing.firstVisited) {
-          byState.set(name, { color: visit.color, firstVisited: visit.lastDate })
+        if (!existing || visit.firstDate < existing.firstVisited) {
+          byState.set(name, { color: visit.color, firstVisited: visit.firstDate })
         }
       })
     })
@@ -562,13 +564,13 @@ function App() {
       .data(timedSegments)
       .join('path')
       .attr('d', (segment) => {
+        const interpolator = libs.d3.geoInterpolate(
+          [segment.start.lon, segment.start.lat],
+          [segment.end.lon, segment.end.lat],
+        )
         const coordinates = [
           [segment.start.lon, segment.start.lat],
-          segment.progress >= 1
-            ? [segment.end.lon, segment.end.lat]
-            : libs.d3
-                .geoInterpolate([segment.start.lon, segment.start.lat], [segment.end.lon, segment.end.lat])
-                (segment.progress),
+          segment.progress >= 1 ? [segment.end.lon, segment.end.lat] : interpolator(segment.progress),
         ]
 
         return path({ type: 'LineString', coordinates })
