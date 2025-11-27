@@ -434,15 +434,13 @@ function App() {
     const path = d3.geoPath(projection)
     const graticule = d3.geoGraticule10()
 
-    const zoomBehavior =
-      zoomBehaviorRef.current ||
-      d3
-        .zoom()
-        .scaleExtent([1, 8])
-        .on('zoom', (event) => {
-          zoomLayer.attr('transform', event.transform)
-          lastTransformRef.current = event.transform
-        })
+    const zoomBehavior = d3
+      .zoom()
+      .scaleExtent([1, 8])
+      .on('zoom', (event) => {
+        zoomLayer.attr('transform', event.transform)
+        lastTransformRef.current = event.transform
+      })
 
     zoomBehaviorRef.current = zoomBehavior
 
