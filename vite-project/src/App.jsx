@@ -11,6 +11,272 @@ const PLAY_DURATION_MS = 16000
 
 const TRIPS = [
   {
+    tripName: 'Wine on the Rhine 2021',
+    color: '#2A9D8F', // placeholder — you can pick a color you like
+    countries: ['United States of America', 'France', 'Luxembourg', 'Germany', 'Switzerland'],
+    itinerary: [
+      // 1) Flight SEA -> DFW
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Dallas/Fort Worth International Airport (DFW)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 32.89748,
+        lonTo: -97.040443,
+        date: '2021-11-14T15:30:00Z', // 8:30 AM PST
+        duration: 230, // 3h 50m
+        type: 'flight',
+      },
+
+      // 2) Layover DFW
+      {
+        airportFrom: 'Dallas/Fort Worth International Airport (DFW)',
+        airportTo: 'Dallas/Fort Worth International Airport (DFW)',
+        latFrom: 32.89748,
+        lonFrom: -97.040443,
+        latTo: 32.89748,
+        lonTo: -97.040443,
+        date: '2021-11-14T19:20:00Z', // 2:20 PM CST / 14 Nov
+        duration: 170, // 2h 50m
+        type: 'layover',
+      },
+
+      // 3) Flight DFW -> CDG (Paris)
+      {
+        airportFrom: 'Dallas/Fort Worth International Airport (DFW)',
+        airportTo: 'Paris Charles de Gaulle Airport (CDG)',
+        latFrom: 32.89748,
+        lonFrom: -97.040443,
+        latTo: 49.00969,
+        lonTo: 2.547924,
+        date: '2021-11-14T23:20:00Z', // 5:10 PM CST
+        duration: 545, // 9h 05m
+        type: 'flight',
+      },
+
+      // 4) Stay in Paris — hotel check-in
+      {
+        airportFrom: 'citizenM Paris Champs-Élysées (Paris, France)',
+        airportTo: 'citizenM Paris Champs-Élysées (Paris, France)',
+        latFrom: 48.8708,
+        lonFrom: 2.309,
+        latTo: 48.8708,
+        lonTo: 2.309,
+        date: '2021-11-15T14:00:00Z', // 15 Nov 2:00 PM CET
+        duration: 1260, // until 16 Nov 11:00 AM CET
+        type: 'stay',
+      },
+
+      // 5) Train Paris -> Luxembourg
+      {
+        airportFrom: 'Paris (depart train station)',
+        airportTo: 'Luxembourg (arrive)',
+        latFrom: 48.8566,
+        lonFrom: 2.3522,
+        latTo: 49.6116,
+        lonTo: 6.1319,
+        date: '2021-11-16T07:13:00Z', // 8:13 AM CET
+        duration: 139, // 2h 19m
+        type: 'train',
+      },
+
+      // 6) Embark river cruise in Luxembourg — start
+      {
+        airportFrom: 'Luxembourg, Luxembourg (cruise start)',
+        airportTo: 'Luxembourg, Luxembourg (cruise start)',
+        latFrom: 49.6116,
+        lonFrom: 6.1319,
+        latTo: 49.6116,
+        lonTo: 6.1319,
+        date: '2021-11-16T14:00:00Z',
+        duration: 168, // until next day entry at 2021-11-17 00:00Z (approx)
+        type: 'cruise',
+      },
+
+      // 7) Cruise → Schweich / Bernkastel (Day 2)
+      {
+        airportFrom: 'Cruise (Luxembourg)',
+        airportTo: 'Schweich / Bernkastel, Germany',
+        latFrom: 49.6116,
+        lonFrom: 6.1319,
+        latTo: 49.9167,
+        lonTo: 6.8333,
+        date: '2021-11-17T00:00:00Z',
+        duration: 86400 / 60, // placeholder: 1 day (in minutes)
+        type: 'cruise',
+      },
+
+      // 8) Cruise → Cochem / Lahnstein (Day 3)
+      {
+        airportFrom: 'Schweich / Bernkastel, Germany',
+        airportTo: 'Cochem / Lahnstein, Germany',
+        latFrom: 49.9167,
+        lonFrom: 6.8333,
+        latTo: 50.1446,
+        lonTo: 7.1691,
+        date: '2021-11-18T00:00:00Z',
+        duration: 1440, // 1 day
+        type: 'cruise',
+      },
+
+      // 9) Cruise → Rüdesheim (Day 4)
+      {
+        airportFrom: 'Cochem / Lahnstein, Germany',
+        airportTo: 'Rüdesheim am Rhein, Germany',
+        latFrom: 50.1446,
+        lonFrom: 7.1691,
+        latTo: 49.9706,
+        lonTo: 7.7937,
+        date: '2021-11-19T00:00:00Z',
+        duration: 1440,
+        type: 'cruise',
+      },
+
+      // 10) Cruise → Ludwigshafen (Day 5)
+      {
+        airportFrom: 'Rüdesheim, Germany',
+        airportTo: 'Ludwigshafen, Germany',
+        latFrom: 49.9706,
+        lonFrom: 7.7937,
+        latTo: 49.4824,
+        lonTo: 8.466,
+        date: '2021-11-20T00:00:00Z',
+        duration: 1440,
+        type: 'cruise',
+      },
+
+      // 11) Cruise → Strasbourg, France (Day 6)
+      {
+        airportFrom: 'Ludwigshafen, Germany',
+        airportTo: 'Strasbourg, France',
+        latFrom: 49.4824,
+        lonFrom: 8.466,
+        latTo: 48.5734,
+        lonTo: 7.7521,
+        date: '2021-11-21T00:00:00Z',
+        duration: 1440,
+        type: 'cruise',
+      },
+
+      // 12) Cruise → Breisach / Basel (Day 7)
+      {
+        airportFrom: 'Strasbourg, France',
+        airportTo: 'Basel / Breisach region (Rhine)',
+        latFrom: 48.5734,
+        lonFrom: 7.7521,
+        latTo: 47.5596,
+        lonTo: 7.5886,
+        date: '2021-11-22T00:00:00Z',
+        duration: 1440,
+        type: 'cruise',
+      },
+
+      // 13) Disembark in Basel (Switzerland) — cruise end
+      {
+        airportFrom: 'Basel, Switzerland (cruise disembarkation)',
+        airportTo: 'Basel, Switzerland (port/rail)',
+        latFrom: 47.5596,
+        lonFrom: 7.5886,
+        latTo: 47.5596,
+        lonTo: 7.5886,
+        date: '2021-11-23T09:00:00Z',
+        duration: 120, // until train to Lausanne
+        type: 'cruise',
+      },
+
+      // 14) Train Basel -> Lausanne (Switzerland)
+      {
+        airportFrom: 'Basel, Switzerland (rail)',
+        airportTo: 'Lausanne, Switzerland (rail)',
+        latFrom: 47.5596,
+        lonFrom: 7.5886,
+        latTo: 46.5197,
+        lonTo: 6.6323,
+        date: '2021-11-23T11:00:00Z',
+        duration: 140, // 2h 20m
+        type: 'train',
+      },
+
+      // 15) Stay in Lausanne + wine-tasting Gruyère etc. — until train to Geneva
+      {
+        airportFrom: 'Lausanne, Switzerland',
+        airportTo: 'Lausanne, Switzerland',
+        latFrom: 46.5197,
+        lonFrom: 6.6323,
+        latTo: 46.5197,
+        lonTo: 6.6323,
+        date: '2021-11-23T13:00:00Z', // after arrival
+        duration: 3060, // until next train 11/26 (approx 2.125 days)
+        type: 'stay',
+      },
+
+      // 16) Train Lausanne -> Geneva
+      {
+        airportFrom: 'Lausanne, Switzerland (rail)',
+        airportTo: 'Geneva, Switzerland (rail)',
+        latFrom: 46.5197,
+        lonFrom: 6.6323,
+        latTo: 46.2044,
+        lonTo: 6.1432,
+        date: '2021-11-26T05:30:00Z', // arbitrary early-morning start
+        duration: 45, // 45 m
+        type: 'train',
+      },
+
+      // 17) Stay in Geneva — hotel
+      {
+        airportFrom: 'citizenM Geneva Centre (Geneva, Switzerland)',
+        airportTo: 'citizenM Geneva Centre (Geneva, Switzerland)',
+        latFrom: 46.2044,
+        lonFrom: 6.1432,
+        latTo: 46.2044,
+        lonTo: 6.1432,
+        date: '2021-11-26T14:00:00Z', // 2:00 PM local
+        duration: 1065, // until 27 Nov 7:30 AM local
+        type: 'stay',
+      },
+
+      // 18) Flight GVA -> FRA (Geneva -> Frankfurt)
+      {
+        airportFrom: 'Geneva Airport (GVA)',
+        airportTo: 'Frankfurt Airport (FRA)',
+        latFrom: 46.2381,
+        lonFrom: 6.1089,
+        latTo: 50.0379,
+        lonTo: 8.5622,
+        date: '2021-11-27T09:55:00Z', // 10:55 AM CET
+        duration: 65, // 1h 05m
+        type: 'flight',
+      },
+
+      // 19) Layover FRA
+      {
+        airportFrom: 'Frankfurt Airport (FRA)',
+        airportTo: 'Frankfurt Airport (FRA)',
+        latFrom: 50.0379,
+        lonFrom: 8.5622,
+        latTo: 50.0379,
+        lonTo: 8.5622,
+        date: '2021-11-27T11:05:00Z',
+        duration: 110, // 1h 50m
+        type: 'layover',
+      },
+
+      // 20) Flight FRA -> SEA
+      {
+        airportFrom: 'Frankfurt Airport (FRA)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 50.0379,
+        lonFrom: 8.5622,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2021-11-27T13:55:00Z',
+        duration: 660, // 11h 00m
+        type: 'flight',
+      },
+    ],
+  },
+  {
     tripName: 'Europe Trip 2023',
     color: '#4F46E5',
     countries: ['United States of America', 'United Kingdom', 'France', 'Spain', 'Ireland'],
