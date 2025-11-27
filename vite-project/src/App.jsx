@@ -545,6 +545,23 @@ const formatDate = (date) =>
 
 const MINUTE_MS = 60 * 1000
 
+const computeTimeExtent = (segmentList) => {
+  if (!segmentList?.length) return null
+
+  return segmentList.reduce(
+    ([min, max], segment) => {
+      const start = segment.date
+      const end = segment.endDate ?? segment.date
+
+      const nextMin = start < min ? start : min
+      const nextMax = end > max ? end : max
+
+      return [nextMin, nextMax]
+    },
+    [segmentList[0].date, segmentList[0].endDate ?? segmentList[0].date],
+  )
+}
+
 const buildSegments = (trips) => {
   const segments = []
   trips.forEach((trip) => {
@@ -682,41 +699,23 @@ function App() {
 
     return byTrip
   }, [segments, visits])
-  const timeExtentsByTrip = useMemo(() => {
-    const computeTimeExtent = (segmentList) => {
-      if (!segmentList.length) return null
 
-      return segmentList.reduce(
-        ([min, max], segment) => {
-          const start = segment.date
-          const end = segment.endDate ?? segment.date
+  const visitsForSelection = useMemo(
+    () => visitsByTrip.get(selectedTrip) ?? visits,
+    [selectedTrip, visits, visitsByTrip],
+  )
 
-          const nextMin = start < min ? start : min
-          const nextMax = end > max ? end : max
-
-          return [nextMin, nextMax]
-        },
-        [segmentList[0].date, segmentList[0].endDate ?? segmentList[0].date],
-      )
-    }
-
-    const extents = new Map()
-
-    TRIPS.forEach(({ tripName }) => {
-      extents.set(
-        tripName,
-        computeTimeExtent(segments.filter((segment) => segment.tripName === tripName)),
-      )
-    })
-
-    extents.set('all', computeTimeExtent(segments))
-
-    return extents
-  }, [segments])
+  const selectedSegments = useMemo(
+    () =>
+      selectedTrip === 'all'
+        ? segments
+        : segments.filter((segment) => segment.tripName === selectedTrip),
+    [segments, selectedTrip],
+  )
 
   const timeExtent = useMemo(
-    () => timeExtentsByTrip.get(selectedTrip) ?? timeExtentsByTrip.get('all'),
-    [selectedTrip, timeExtentsByTrip],
+    () => computeTimeExtent(selectedSegments),
+    [selectedSegments],
   )
 
   const currentDate = useMemo(() => {
@@ -731,23 +730,22 @@ function App() {
     if (!currentDate) return []
     const now = currentDate.getTime()
 
-    return segments
+    return selectedSegments
       .filter((segment) => now >= segment.date.getTime())
-      .filter((segment) => selectedTrip === 'all' || segment.tripName === selectedTrip)
       .map((segment) => {
         if (!segment.durationMs || segment.durationMs <= 0) return { ...segment, progress: 1 }
         const elapsed = now - segment.date.getTime()
         const progress = Math.min(1, Math.max(0, elapsed / segment.durationMs))
         return { ...segment, progress }
       })
-  }, [currentDate, segments, selectedTrip])
+  }, [currentDate, selectedSegments])
 
   const filteredVisits = useMemo(
     () =>
-      (visitsByTrip.get(selectedTrip) ?? visits)
+      visitsForSelection
         .filter((visit) => !currentDate || visit.firstDate.getTime() <= currentDate.getTime())
         .filter((visit) => (selectedTrip === 'all' ? true : visit.trips.has(selectedTrip))),
-    [currentDate, selectedTrip, visits, visitsByTrip],
+    [currentDate, selectedTrip, visitsForSelection],
   )
 
   const countryVisits = useMemo(() => {
@@ -1042,8 +1040,8 @@ function App() {
   const heroSummary = useMemo(() => {
     if (!timeExtent) return ''
     const [min, max] = timeExtent
-    return `${formatDate(min)} → ${formatDate(max)} · ${segments.length} segments · ${visits.length} stops`
-  }, [timeExtent, segments.length, visits.length])
+    return `${formatDate(min)} → ${formatDate(max)} · ${selectedSegments.length} segments · ${visitsForSelection.length} stops`
+  }, [timeExtent, selectedSegments.length, visitsForSelection.length])
 
   const sliderLabel = currentDate ? formatDate(currentDate) : 'Loading map…'
 
