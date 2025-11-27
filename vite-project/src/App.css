@@ -253,7 +253,8 @@ select {
   fill: none;
   stroke-width: 2.5;
   opacity: 0.85;
-  animation: draw-route 1.8s ease-in-out infinite;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .routes .route-train {
@@ -266,18 +267,6 @@ select {
 
 .routes .route-flight {
   filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.35));
-}
-
-@keyframes draw-route {
-  0% {
-    stroke-dashoffset: 22;
-  }
-  50% {
-    stroke-dashoffset: 6;
-  }
-  100% {
-    stroke-dashoffset: 0;
-  }
 }
 
 .markers circle {

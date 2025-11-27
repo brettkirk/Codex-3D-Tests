@@ -212,6 +212,8 @@ const formatDate = (date) =>
     })
     .replace(/,/, '')
 
+const MINUTE_MS = 60 * 1000
+
 const buildSegments = (trips) => {
   const segments = []
   trips.forEach((trip) => {
@@ -222,13 +224,18 @@ const buildSegments = (trips) => {
         lon: leg.lonFrom ?? cursor?.lon ?? leg.lonTo,
       }
       const end = { lat: leg.latTo ?? start.lat, lon: leg.lonTo ?? start.lon }
+      const date = new Date(leg.date)
+      const durationMs = Math.max(0, (leg.duration ?? 0) * MINUTE_MS)
+      const endDate = new Date(date.getTime() + durationMs)
       segments.push({
         ...leg,
         tripName: trip.tripName,
         color: trip.color,
         start,
         end,
-        date: new Date(leg.date),
+        date,
+        endDate,
+        durationMs,
       })
       cursor = end
     })
@@ -271,7 +278,14 @@ const buildVisitCounts = (segments) => {
 
   segments.forEach((segment) => {
     register(segment.start.lat, segment.start.lon, segment.airportFrom, segment.tripName, segment.color, segment.date)
-    register(segment.end.lat, segment.end.lon, segment.airportTo, segment.tripName, segment.color, segment.date)
+    register(
+      segment.end.lat,
+      segment.end.lon,
+      segment.airportTo,
+      segment.tripName,
+      segment.color,
+      segment.endDate ?? segment.date,
+    )
   })
 
   return Array.from(visitMap.values())
@@ -324,7 +338,12 @@ function App() {
 
   const timeExtent = useMemo(() => {
     if (!segments.length) return null
-    return [segments[0].date, segments[segments.length - 1].date]
+    const start = segments[0].date
+    const end = segments.reduce((latest, segment) => {
+      if (!segment.endDate) return latest
+      return segment.endDate > latest ? segment.endDate : latest
+    }, segments[segments.length - 1].endDate ?? segments[segments.length - 1].date)
+    return [start, end]
   }, [segments])
 
   const currentDate = useMemo(() => {
@@ -335,26 +354,27 @@ function App() {
     return new Date(next)
   }, [sliderValue, timeExtent])
 
-  const filteredSegments = useMemo(
-    () =>
-      segments.filter(
-        (segment) =>
-          (!currentDate || segment.date.getTime() <= currentDate.getTime()) &&
-          (selectedTrip === 'all' || segment.tripName === selectedTrip),
-      ),
-    [segments, selectedTrip, currentDate],
-  )
+  const timedSegments = useMemo(() => {
+    if (!currentDate) return []
+    const now = currentDate.getTime()
+
+    return segments
+      .filter((segment) => now >= segment.date.getTime())
+      .filter((segment) => selectedTrip === 'all' || segment.tripName === selectedTrip)
+      .map((segment) => {
+        if (!segment.durationMs || segment.durationMs <= 0) return { ...segment, progress: 1 }
+        const elapsed = now - segment.date.getTime()
+        const progress = Math.min(1, Math.max(0, elapsed / segment.durationMs))
+        return { ...segment, progress }
+      })
+  }, [currentDate, segments, selectedTrip])
 
   const filteredVisits = useMemo(
     () =>
       visits
         .filter((visit) => !currentDate || visit.lastDate.getTime() <= currentDate.getTime())
-        .filter((visit) =>
-          selectedTrip === 'all'
-            ? true
-            : visit.trips.has(selectedTrip),
-        ),
-    [currentDate, visits, selectedTrip],
+        .filter((visit) => (selectedTrip === 'all' ? true : visit.trips.has(selectedTrip))),
+    [currentDate, selectedTrip, visits],
   )
 
   useEffect(() => {
@@ -477,11 +497,20 @@ function App() {
       .append('g')
       .attr('class', 'routes')
       .selectAll('path')
-      .data(filteredSegments)
+      .data(timedSegments)
       .join('path')
-      .attr('d', (segment) =>
-        path({ type: 'LineString', coordinates: [[segment.start.lon, segment.start.lat], [segment.end.lon, segment.end.lat]] }),
-      )
+      .attr('d', (segment) => {
+        const coordinates = [
+          [segment.start.lon, segment.start.lat],
+          segment.progress >= 1
+            ? [segment.end.lon, segment.end.lat]
+            : libs.d3
+                .geoInterpolate([segment.start.lon, segment.start.lat], [segment.end.lon, segment.end.lat])
+                (segment.progress),
+        ]
+
+        return path({ type: 'LineString', coordinates })
+      })
       .attr('class', (segment) => `route route-${segment.type}`)
       .attr('stroke', (segment) => segment.color)
       .attr('stroke-dasharray', (segment) => TRANSPORT_STYLES[segment.type]?.strokeDasharray || '0')
@@ -508,7 +537,7 @@ function App() {
       .attr('stroke-width', 0.5)
       .append('title')
       .text((visit) => `${visit.label || 'Stop'} · ${visit.visits} visit(s)\n${Array.from(visit.trips).join(', ')}`)
-  }, [libs, geographies, currentDate, filteredSegments, filteredVisits, countryTimeline])
+  }, [libs, geographies, currentDate, timedSegments, filteredVisits, countryTimeline])
 
   useEffect(() => {
     if (!isPlaying || !timeExtent) return () => {}
@@ -640,7 +669,7 @@ function App() {
           </div>
           <div className="panel-row">
             <span className="label">Segments shown</span>
-            <span className="value">{filteredSegments.length}</span>
+            <span className="value">{timedSegments.length}</span>
           </div>
           <div className="panel-row">
             <span className="label">Markers shown</span>
