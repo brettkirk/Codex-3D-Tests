@@ -6,6 +6,8 @@ const MAP_ENDPOINTS = {
   states: 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json',
 }
 
+const PLAY_DURATION_MS = 16000
+
 const TRIPS = [
   {
     tripName: 'Europe Trip 2023',
@@ -311,7 +313,10 @@ function App() {
   const [status, setStatus] = useState('booting')
   const [selectedTrip, setSelectedTrip] = useState('all')
   const [sliderValue, setSliderValue] = useState(100)
+  const [isPlaying, setIsPlaying] = useState(false)
   const [hoveredRegion, setHoveredRegion] = useState(null)
+  const rafRef = useRef(null)
+  const lastTickRef = useRef(null)
 
   const segments = useMemo(() => buildSegments(TRIPS), [])
   const visits = useMemo(() => buildVisitCounts(segments), [segments])
@@ -505,6 +510,52 @@ function App() {
       .text((visit) => `${visit.label || 'Stop'} · ${visit.visits} visit(s)\n${Array.from(visit.trips).join(', ')}`)
   }, [libs, geographies, currentDate, filteredSegments, filteredVisits, countryTimeline])
 
+  useEffect(() => {
+    if (!isPlaying || !timeExtent) return () => {}
+
+    const step = (timestamp) => {
+      if (lastTickRef.current == null) lastTickRef.current = timestamp
+      const elapsed = timestamp - lastTickRef.current
+      lastTickRef.current = timestamp
+
+      setSliderValue((previous) => {
+        const next = previous + (elapsed / PLAY_DURATION_MS) * 100
+        if (next >= 100) {
+          setIsPlaying(false)
+          return 100
+        }
+        return next
+      })
+
+      if (isPlaying) rafRef.current = requestAnimationFrame(step)
+    }
+
+    rafRef.current = requestAnimationFrame(step)
+
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      rafRef.current = null
+      lastTickRef.current = null
+    }
+  }, [isPlaying, timeExtent])
+
+  useEffect(() => {
+    if (!isPlaying) return
+    if (sliderValue >= 100) setIsPlaying(false)
+  }, [isPlaying, sliderValue])
+
+  const togglePlayback = () => {
+    if (isPlaying) {
+      setIsPlaying(false)
+      return
+    }
+
+    if (sliderValue >= 100) {
+      setSliderValue(0)
+    }
+    setIsPlaying(true)
+  }
+
   const heroSummary = useMemo(() => {
     if (!timeExtent) return ''
     const [min, max] = timeExtent
@@ -542,6 +593,9 @@ function App() {
               Timeline preview
             </label>
             <div className="slider-row">
+              <button type="button" className="play-toggle" onClick={togglePlayback} aria-label="Toggle timeline playback">
+                {isPlaying ? 'Pause' : 'Play'}
+              </button>
               <input
                 type="range"
                 id="timeline"

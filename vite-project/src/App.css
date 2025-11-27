@@ -98,6 +98,29 @@ select {
   accent-color: #38bdf8;
 }
 
+.play-toggle {
+  padding: 0.55rem 0.95rem;
+  border-radius: 10px;
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(56, 189, 248, 0.1));
+  color: #e2e8f0;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  min-width: 88px;
+}
+
+.play-toggle:hover {
+  transform: translateY(-1px);
+  border-color: rgba(125, 211, 252, 0.8);
+  box-shadow: 0 10px 30px rgba(56, 189, 248, 0.28);
+}
+
+.play-toggle:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 18px rgba(56, 189, 248, 0.32);
+}
+
 .slider-label {
   min-width: 120px;
   text-align: right;
