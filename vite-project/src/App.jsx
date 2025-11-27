@@ -462,10 +462,28 @@ function App() {
     const path = d3.geoPath(projection)
     const graticule = d3.geoGraticule10()
 
+    const markerRadius = (visit) => 3 + Math.sqrt(visit.visits) * 3
+    const routeWidth = (segment) => {
+      if (segment.type === 'train') return 3.5
+      if (segment.type === 'car') return 2.8
+      return 2.5
+    }
+
+    let markerSelection = null
+    let routeSelection = null
+
     const zoomBehavior = zoomBehaviorRef.current ?? d3.zoom().scaleExtent([1, 8])
     zoomBehavior.on('zoom', (event) => {
       zoomLayer.attr('transform', event.transform)
       lastTransformRef.current = event.transform
+
+      if (routeSelection) {
+        routeSelection.attr('stroke-width', (segment) => routeWidth(segment) / event.transform.k)
+      }
+
+      if (markerSelection) {
+        markerSelection.attr('r', (visit) => markerRadius(visit) / event.transform.k)
+      }
     })
 
     zoomBehaviorRef.current = zoomBehavior
@@ -533,7 +551,7 @@ function App() {
       .attr('class', 'state-borders')
       .attr('d', path(geographies.stateMesh))
 
-    zoomLayer
+    routeSelection = zoomLayer
       .append('g')
       .attr('class', 'routes')
       .selectAll('path')
@@ -553,6 +571,7 @@ function App() {
       })
       .attr('class', (segment) => `route route-${segment.type}`)
       .attr('stroke', (segment) => segment.color)
+      .attr('stroke-width', (segment) => routeWidth(segment) / (lastTransformRef.current?.k ?? 1))
       .attr('stroke-dasharray', (segment) => TRANSPORT_STYLES[segment.type]?.strokeDasharray || '0')
       .append('title')
       .text(
@@ -560,7 +579,7 @@ function App() {
           `${segment.tripName}: ${segment.airportFrom} → ${segment.airportTo}\n${formatDate(segment.date)} · ${TRANSPORT_STYLES[segment.type]?.label || segment.type}`,
       )
 
-    zoomLayer
+    markerSelection = zoomLayer
       .append('g')
       .attr('class', 'markers')
       .selectAll('circle')
@@ -570,7 +589,7 @@ function App() {
         const [x, y] = projection([visit.lon, visit.lat])
         return `translate(${x}, ${y})`
       })
-      .attr('r', (visit) => 3 + Math.sqrt(visit.visits) * 3)
+      .attr('r', (visit) => markerRadius(visit) / (lastTransformRef.current?.k ?? 1))
       .attr('fill', (visit) => visit.color)
       .attr('fill-opacity', 0.82)
       .attr('stroke', 'rgba(0,0,0,0.45)')
