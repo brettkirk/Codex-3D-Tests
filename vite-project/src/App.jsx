@@ -593,10 +593,8 @@ function App() {
       .selectAll('circle')
       .data(filteredVisits)
       .join('circle')
-      .attr('transform', (visit) => {
-        const [x, y] = projection([visit.lon, visit.lat])
-        return `translate(${x}, ${y})`
-      })
+      .attr('cx', (visit) => projection([visit.lon, visit.lat])[0])
+      .attr('cy', (visit) => projection([visit.lon, visit.lat])[1])
       .attr('r', (visit) => markerRadius(visit) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
       .attr('fill', (visit) => visit.color)
       .attr('fill-opacity', 0.82)
