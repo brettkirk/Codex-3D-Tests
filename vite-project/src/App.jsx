@@ -2071,12 +2071,21 @@ function App() {
     let markerSelection = null
     let routeSelection = null
 
+    const DOMESTIC_ZOOM_MODIFIER = d3.zoomIdentity
+      .translate(-1459.3920596675057, -911.0815929010673)
+      .scale(6.196857045786471)
+
     const zoomBehavior = zoomBehaviorRef.current ?? d3.zoom().scaleExtent([1, 8])
     zoomBehavior.on('zoom', (event) => {
-      zoomLayer.attr('transform', event.transform)
-      lastTransformRef.current = event.transform
+      const combinedTransform =
+        travelScope === 'domestic'
+          ? event.transform.multiply(DOMESTIC_ZOOM_MODIFIER)
+          : event.transform
 
-      const zoomFactor = zoomSizeAdjustment(event.transform.k)
+      zoomLayer.attr('transform', combinedTransform)
+      lastTransformRef.current = combinedTransform
+
+      const zoomFactor = zoomSizeAdjustment(combinedTransform.k)
 
       if (routeSelection) {
         routeSelection.attr('stroke-width', (segment) => routeWidth(segment) / zoomFactor)
@@ -2214,7 +2223,18 @@ function App() {
             )}${visit.lastDate ? `\nLast: ${formatDate(visit.lastDate)}` : ''}`,
         )
     }
-  }, [countryVisits, currentDate, filteredVisits, geographies, libs, showMarkers, showRoutes, stateVisits, timedSegments])
+  }, [
+    countryVisits,
+    currentDate,
+    filteredVisits,
+    geographies,
+    libs,
+    showMarkers,
+    showRoutes,
+    stateVisits,
+    timedSegments,
+    travelScope,
+  ])
 
   useEffect(() => {
     if (!libs || !geographies) return undefined
