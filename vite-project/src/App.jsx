@@ -1138,6 +1138,77 @@ const TRIPS = [
         type: 'car'
       }
     ]
+  },
+  {
+    tripName: "Blake and Han's 10th Anniversary",
+    color: '#9333EA', // placeholder
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) Drive Issaquah → Eugene (Aug 6, 6 PM → 12:21 AM)
+      {
+        airportFrom: 'Issaquah, Washington',
+        airportTo: 'Eugene, Oregon',
+        latFrom: 47.5301,
+        lonFrom: -122.0326,
+        latTo: 44.0521,
+        lonTo: -123.0868,
+        date: '2025-08-07T01:00:00Z', // 6 PM PDT (Aug 6)
+        duration: 381, // 6h 21m
+        type: 'car',
+      },
+
+      // 2) Stay in Eugene at Best Western (overnight)
+      {
+        airportFrom: 'Best Western (Eugene, Oregon)',
+        airportTo: 'Best Western (Eugene, Oregon)',
+        latFrom: 44.0521,
+        lonFrom: -123.0868,
+        latTo: 44.0521,
+        lonTo: -123.0868,
+        date: '2025-08-07T07:21:00Z', // 12:21 AM arrival = stay start
+        duration: 348, // until 6 AM departure (Aug 7)
+        type: 'stay',
+      },
+
+      // 3) Drive Eugene → Folsom (Aug 7, 6 AM → ~5:30 PM)
+      {
+        airportFrom: 'Eugene, Oregon',
+        airportTo: 'Folsom, California',
+        latFrom: 44.0521,
+        lonFrom: -123.0868,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2025-08-07T13:00:00Z', // 6 AM PDT
+        duration: 690, // 11h 30m
+        type: 'car',
+      },
+
+      // 4) Stay in Folsom (Aug 7 → Aug 10)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2025-08-07T22:00:00Z', // 3 PM check-in
+        duration: 4530, // until 11 AM Aug 10
+        type: 'stay',
+      },
+
+      // 5) Drive Folsom → Seattle (Aug 10 11 AM → Aug 11 4 AM)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Seattle, Washington',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 47.6062,
+        lonTo: -122.3321,
+        date: '2025-08-10T18:00:00Z', // 11 AM PDT
+        duration: 1020, // 17 hours
+        type: 'car',
+      },
+    ],
   }
 ]
 
