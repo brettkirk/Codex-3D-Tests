@@ -1209,6 +1209,142 @@ const TRIPS = [
         type: 'car',
       },
     ],
+  },
+  {
+    tripName: 'Pokemon and Colorado',
+    color: '#0EA5E9', // placeholder
+    countries: ['United States of America', 'Canada'],
+    itinerary: [
+      // 1) Drive Seattle → Vancouver BC (Sept 26, 9:30 AM → ~3:00 PM)
+      {
+        airportFrom: 'Seattle, Washington',
+        airportTo: 'Vancouver, British Columbia',
+        latFrom: 47.6062,
+        lonFrom: -122.3321,
+        latTo: 49.2827,
+        lonTo: -123.1207,
+        date: '2025-09-26T16:30:00Z', // 9:30 AM PDT
+        duration: 330, // 5h 30m
+        type: 'car',
+      },
+
+      // 2) Stay at Hilton Vancouver Metrotown (Sept 26–27)
+      {
+        airportFrom: 'Hilton Vancouver Metrotown (Burnaby, BC)',
+        airportTo: 'Hilton Vancouver Metrotown (Burnaby, BC)',
+        latFrom: 49.2263,
+        lonFrom: -123.0046,
+        latTo: 49.2263,
+        lonTo: -123.0046,
+        date: '2025-09-26T22:00:00Z', // ~3 PM check-in
+        duration: 1440, // until 3:30 PM departure next day
+        type: 'stay',
+      },
+
+      // 3) Drive Vancouver → Seattle (Sept 27, 3:30 PM → 9:00 PM)
+      {
+        airportFrom: 'Vancouver, British Columbia',
+        airportTo: 'Seattle, Washington',
+        latFrom: 49.2827,
+        lonFrom: -123.1207,
+        latTo: 47.6062,
+        lonTo: -122.3321,
+        date: '2025-09-27T22:30:00Z', // 3:30 PM PDT
+        duration: 330, // 5h 30m
+        type: 'car',
+      },
+
+      // 4) Flight SEA → DEN (Sept 28, 7 AM, 3 hr flight)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Denver International Airport (DEN)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 39.8561,
+        lonTo: -104.6737,
+        date: '2025-09-28T14:00:00Z', // 7 AM PDT
+        duration: 180, // 3 hours
+        type: 'flight',
+      },
+
+      // 5) Stay in Denver at your sister’s house (Sept 28)
+      {
+        airportFrom: 'Denver, Colorado',
+        airportTo: 'Denver, Colorado',
+        latFrom: 39.7392,
+        lonFrom: -104.9903,
+        latTo: 39.7392,
+        lonTo: -104.9903,
+        date: '2025-09-28T16:00:00Z', // after arrival
+        duration: 1320, // through the night until 2 PM next day (29th)
+        type: 'stay',
+      },
+
+      // 6) Drive Denver → Colorado Springs (Sept 29, 2 PM → 3 PM)
+      {
+        airportFrom: 'Denver, Colorado',
+        airportTo: 'Colorado Springs, Colorado',
+        latFrom: 39.7392,
+        lonFrom: -104.9903,
+        latTo: 38.8339,
+        lonTo: -104.8214,
+        date: '2025-09-29T20:00:00Z', // 2 PM MDT
+        duration: 60,
+        type: 'car',
+      },
+
+      // 7) Cave tour in Colorado Springs (3:15 PM → 4:00 PM)
+      {
+        airportFrom: 'Colorado Springs, Colorado (cave tour)',
+        airportTo: 'Colorado Springs, Colorado (cave tour)',
+        latFrom: 38.8339,
+        lonFrom: -104.8214,
+        latTo: 38.8339,
+        lonTo: -104.8214,
+        date: '2025-09-29T21:15:00Z', // 3:15 PM
+        duration: 45,
+        type: 'stay',
+      },
+
+      // 8) Drive Colorado Springs → Denver (4 PM → 5:30 PM)
+      {
+        airportFrom: 'Colorado Springs, Colorado',
+        airportTo: 'Denver, Colorado',
+        latFrom: 38.8339,
+        lonFrom: -104.8214,
+        latTo: 39.7392,
+        lonTo: -104.9903,
+        date: '2025-09-29T22:00:00Z', // 4 PM MDT
+        duration: 90,
+        type: 'car',
+      },
+
+      // 9) Stay in Denver (Sept 29 → Sept 30 flight)
+      {
+        airportFrom: 'Denver, Colorado',
+        airportTo: 'Denver, Colorado',
+        latFrom: 39.7392,
+        lonFrom: -104.9903,
+        latTo: 39.7392,
+        lonTo: -104.9903,
+        date: '2025-09-29T23:30:00Z', // ~5:30 PM
+        duration: 1080, // until 6:30 PM flight next day
+        type: 'stay',
+      },
+
+      // 10) Flight DEN → SEA (Sept 30, 6:30 PM, 3 hr flight)
+      {
+        airportFrom: 'Denver International Airport (DEN)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 39.8561,
+        lonFrom: -104.6737,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2025-10-01T00:30:00Z', // 6:30 PM MDT
+        duration: 180,
+        type: 'flight',
+      },
+    ],
   }
 ]
 
