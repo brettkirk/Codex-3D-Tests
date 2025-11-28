@@ -1211,6 +1211,238 @@ const TRIPS = [
     ],
   },
   {
+    tripName: 'Denver 2023',
+    color: '#F97316',
+    countries: ['United States of America'],
+    itinerary: [
+      // SEA -> DEN
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Denver International Airport (DEN)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 39.8561,
+        lonTo: -104.6737,
+        date: '2023-04-07T16:00:00Z', // 9 AM PDT
+        duration: 180,
+        type: 'flight',
+      },
+
+      // Stay with sister in Denver (Apr 7–10)
+      {
+        airportFrom: 'Denver, Colorado',
+        airportTo: 'Denver, Colorado',
+        latFrom: 39.7392,
+        lonFrom: -104.9903,
+        latTo: 39.7392,
+        lonTo: -104.9903,
+        date: '2023-04-07T18:00:00Z',
+        duration: 4410, // until 11 AM Apr 10
+        type: 'stay',
+      },
+
+      // DEN -> SEA
+      {
+        airportFrom: 'Denver International Airport (DEN)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 39.8561,
+        lonFrom: -104.6737,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2023-04-10T17:00:00Z', // 11 AM MDT
+        duration: 180,
+        type: 'flight',
+      },
+    ],
+  },
+  {
+    tripName: 'Crater Lake 2022',
+    color: '#1D4ED8',
+    countries: ['United States of America'],
+    itinerary: [
+      // Seattle -> Chiloquin (June 3)
+      {
+        airportFrom: 'Seattle, Washington',
+        airportTo: 'Chiloquin, Oregon',
+        latFrom: 47.6062,
+        lonFrom: -122.3321,
+        latTo: 42.5754,
+        lonTo: -121.8661,
+        date: '2022-06-03T17:00:00Z', // 10 AM PDT
+        duration: 600, // approx 10 hours
+        type: 'car',
+      },
+
+      // Camping in Chiloquin (June 3–5)
+      {
+        airportFrom: 'Chiloquin, Oregon (Campground)',
+        airportTo: 'Chiloquin, Oregon (Campground)',
+        latFrom: 42.5754,
+        lonFrom: -121.8661,
+        latTo: 42.5754,
+        lonTo: -121.8661,
+        date: '2022-06-04T00:00:00Z',
+        duration: 2880, // 2 days
+        type: 'stay',
+      },
+
+      // Chiloquin -> Grants Pass (June 5)
+      {
+        airportFrom: 'Chiloquin, Oregon',
+        airportTo: 'Grants Pass, Oregon',
+        latFrom: 42.5754,
+        lonFrom: -121.8661,
+        latTo: 42.439,
+        lonTo: -123.3284,
+        date: '2022-06-05T18:00:00Z', // 11 AM PDT
+        duration: 90,
+        type: 'car',
+      },
+
+      // Hang out ~1 hour in Grants Pass
+      {
+        airportFrom: 'Grants Pass, Oregon',
+        airportTo: 'Grants Pass, Oregon',
+        latFrom: 42.439,
+        lonFrom: -123.3284,
+        latTo: 42.439,
+        lonTo: -123.3284,
+        date: '2022-06-05T19:30:00Z',
+        duration: 60,
+        type: 'stay',
+      },
+
+      // Grants Pass -> Seattle (arrive ~9 PM)
+      {
+        airportFrom: 'Grants Pass, Oregon',
+        airportTo: 'Seattle, Washington',
+        latFrom: 42.439,
+        lonFrom: -123.3284,
+        latTo: 47.6062,
+        lonTo: -122.3321,
+        date: '2022-06-05T20:30:00Z',
+        duration: 510, // 8.5 hours
+        type: 'car',
+      },
+    ],
+  },
+  {
+    tripName: 'Beyond Wonderland 2022',
+    color: '#EC4899',
+    countries: ['United States of America'],
+    itinerary: [
+      // Seattle → Gorge Amphitheater (June 18 early morning)
+      {
+        airportFrom: 'Seattle, Washington',
+        airportTo: 'Gorge Amphitheatre, Washington',
+        latFrom: 47.6062,
+        lonFrom: -122.3321,
+        latTo: 47.1016,
+        lonTo: -119.9886,
+        date: '2022-06-18T08:30:00Z', // 1:30 AM PDT
+        duration: 230, // 3h 50m (to 5:20 AM)
+        type: 'car',
+      },
+
+      // Camping at the Gorge (June 18–21)
+      {
+        airportFrom: 'Gorge Amphitheatre (Campground)',
+        airportTo: 'Gorge Amphitheatre (Campground)',
+        latFrom: 47.1016,
+        lonFrom: -119.9886,
+        latTo: 47.1016,
+        lonTo: -119.9886,
+        date: '2022-06-18T12:20:00Z', // after arrival
+        duration: 4320, // ~3 days until morning 6/21
+        type: 'stay',
+      },
+
+      // Drive Gorge → Seattle (June 21, 7 AM)
+      {
+        airportFrom: 'Gorge Amphitheatre',
+        airportTo: 'Seattle, Washington',
+        latFrom: 47.1016,
+        lonFrom: -119.9886,
+        latTo: 47.6062,
+        lonTo: -122.3321,
+        date: '2022-06-21T14:00:00Z', // 7 AM PDT
+        duration: 210, // 3h 30m
+        type: 'car',
+      },
+    ],
+  },
+  {
+    tripName: 'Beyond The Elephant 2024',
+    color: '#A855F7',
+    countries: ['United States of America'],
+    itinerary: [
+      // Seattle → Gorge (June 22, Midnight → 4 AM)
+      {
+        airportFrom: 'Seattle, Washington',
+        airportTo: 'Gorge Amphitheatre, Washington',
+        latFrom: 47.6062,
+        lonFrom: -122.3321,
+        latTo: 47.1016,
+        lonTo: -119.9886,
+        date: '2024-06-22T07:00:00Z', // Midnight PDT
+        duration: 240, // 4 hours
+        type: 'car',
+      },
+
+      // Camping at Gorge (June 22–24)
+      {
+        airportFrom: 'Gorge Amphitheatre (Campground)',
+        airportTo: 'Gorge Amphitheatre (Campground)',
+        latFrom: 47.1016,
+        lonFrom: -119.9886,
+        latTo: 47.1016,
+        lonTo: -119.9886,
+        date: '2024-06-22T11:00:00Z',
+        duration: 2640, // until ~10 AM on the 24th
+        type: 'stay',
+      },
+
+      // Gorge → Bend (June 24, ~10 AM → 5 PM)
+      {
+        airportFrom: 'Gorge Amphitheatre',
+        airportTo: 'Bend, Oregon',
+        latFrom: 47.1016,
+        lonFrom: -119.9886,
+        latTo: 44.0582,
+        lonTo: -121.3153,
+        date: '2024-06-24T17:00:00Z', // 10 AM PDT
+        duration: 420, // 7 hours
+        type: 'car',
+      },
+
+      // Stay at Residence Inn (Bend)
+      {
+        airportFrom: 'Residence Inn Bend (Old Mill District)',
+        airportTo: 'Residence Inn Bend (Old Mill District)',
+        latFrom: 44.0444,
+        lonFrom: -121.3151,
+        latTo: 44.0444,
+        lonTo: -121.3151,
+        date: '2024-06-24T22:00:00Z',
+        duration: 660, // until 9 AM next morning
+        type: 'stay',
+      },
+
+      // Bend → Seattle (June 25, 9 AM → ~3 PM)
+      {
+        airportFrom: 'Bend, Oregon',
+        airportTo: 'Seattle, Washington',
+        latFrom: 44.0582,
+        lonFrom: -121.3153,
+        latTo: 47.6062,
+        lonTo: -122.3321,
+        date: '2024-06-25T16:00:00Z', // 9 AM PDT
+        duration: 360, // 6 hours
+        type: 'car',
+      },
+    ],
+  },
+  {
     tripName: 'Pokemon and Colorado',
     color: '#0EA5E9', // placeholder
     countries: ['United States of America', 'Canada'],
