@@ -971,6 +971,12 @@ const computeTimeExtent = (segmentList) => {
   )
 }
 
+const getTripStartDate = (trip) =>
+  trip.itinerary.reduce((earliest, leg) => {
+    const date = new Date(leg.date)
+    return date < earliest ? date : earliest
+  }, new Date(trip.itinerary[0]?.date))
+
 const buildSegments = (trips) => {
   const segments = []
   trips.forEach((trip) => {
@@ -1097,13 +1103,18 @@ function App() {
   const rafRef = useRef(null)
   const lastTickRef = useRef(null)
 
-  const segments = useMemo(() => buildSegments(TRIPS), [])
+  const sortedTrips = useMemo(
+    () => [...TRIPS].sort((a, b) => getTripStartDate(a) - getTripStartDate(b)),
+    [],
+  )
+
+  const segments = useMemo(() => buildSegments(sortedTrips), [sortedTrips])
   const visits = useMemo(() => buildVisitCounts(segments), [segments])
 
   const visitsByTrip = useMemo(() => {
     const byTrip = new Map()
 
-    TRIPS.forEach(({ tripName }) => {
+    sortedTrips.forEach(({ tripName }) => {
       byTrip.set(
         tripName,
         buildVisitCounts(
@@ -1115,7 +1126,7 @@ function App() {
     byTrip.set('all', visits)
 
     return byTrip
-  }, [segments, visits])
+  }, [segments, sortedTrips, visits])
 
   const visitsForSelection = useMemo(
     () => visitsByTrip.get(selectedTrip) ?? visits,
@@ -1484,7 +1495,7 @@ function App() {
             </label>
             <select id="trip" value={selectedTrip} onChange={(event) => setSelectedTrip(event.target.value)}>
               <option value="all">All trips</option>
-              {TRIPS.map((trip) => (
+              {sortedTrips.map((trip) => (
                 <option key={trip.tripName} value={trip.tripName}>
                   {trip.tripName}
                 </option>
