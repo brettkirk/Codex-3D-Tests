@@ -931,6 +931,187 @@ const TRIPS = [
         type: 'flight'
       }
     ]
+  },
+  {
+    tripName: 'New Years in Vegas',
+    color: '#F43F5E', // placeholder
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) Flight SEA -> SMF (Dec 23)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6951,
+        lonTo: -121.5908,
+        date: '2024-12-23T22:00:00Z', // 2 PM PST
+        duration: 120,
+        type: 'flight'
+      },
+
+      // 2) Stay in Folsom (Dec 23–26)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2024-12-23T23:00:00Z', // ~3 PM check-in after flight/drive
+        duration: 4260, // until 11 AM 12/26
+        type: 'stay'
+      },
+
+      // 3) Flight SMF -> SAN (Dec 26)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'San Diego International Airport (SAN)',
+        latFrom: 38.6951,
+        lonFrom: -121.5908,
+        latTo: 32.7338,
+        lonTo: -117.1933,
+        date: '2024-12-26T18:45:00Z', // 10:45 AM PST
+        duration: 90, // 1h 30m
+        type: 'flight'
+      },
+
+      // 4) Flight SAN -> LAS (same day)
+      {
+        airportFrom: 'San Diego International Airport (SAN)',
+        airportTo: 'Harry Reid International Airport (LAS)',
+        latFrom: 32.7338,
+        lonFrom: -117.1933,
+        latTo: 36.086,
+        lonTo: -115.1537,
+        date: '2024-12-26T21:05:00Z', // 1:05 PM PST
+        duration: 85, // 1h 25m
+        type: 'flight'
+      },
+
+      // 5) Stay at Vdara (Dec 26–29)
+      {
+        airportFrom: 'Vdara Hotel & Spa (Las Vegas Strip)',
+        airportTo: 'Vdara Hotel & Spa (Las Vegas Strip)',
+        latFrom: 36.1095,
+        lonFrom: -115.1761,
+        latTo: 36.1095,
+        lonTo: -115.1761,
+        date: '2024-12-26T23:00:00Z', // check-in ~3 PM local
+        duration: 4320, // until 11 AM 12/29
+        type: 'stay'
+      },
+
+      // 6) Flight LAS -> SEA (Dec 29)
+      {
+        airportFrom: 'Harry Reid International Airport (LAS)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 36.086,
+        lonFrom: -115.1537,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2024-12-29T23:00:00Z', // 3 PM PST
+        duration: 170, // 2h 50m
+        type: 'flight'
+      }
+    ]
+  },
+  {
+    tripName: 'Six in Spokane',
+    color: '#3B82F6', // placeholder
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) Drive Seattle -> Spokane (Jan 26)
+      {
+        airportFrom: 'Seattle, Washington',
+        airportTo: 'Spokane, Washington',
+        latFrom: 47.6062,
+        lonFrom: -122.3321,
+        latTo: 47.6588,
+        lonTo: -117.426,
+        date: '2024-01-26T19:00:00Z', // 11 AM PST
+        duration: 380, // 6h 20m (arrived 5:20 PM)
+        type: 'car'
+      },
+
+      // 2) Hotel stay at Oxford Suites (Jan 26–27)
+      {
+        airportFrom: 'Oxford Suites Spokane (Riverside area)',
+        airportTo: 'Oxford Suites Spokane (Riverside area)',
+        latFrom: 47.6581,
+        lonFrom: -117.4106,
+        latTo: 47.6581,
+        lonTo: -117.4106,
+        date: '2024-01-26T23:00:00Z', // 3 PM check-in (arrival was later, but overlap rule: start at arrival)
+        duration: 660, // until 12 PM departure next day (1/27)
+        type: 'stay'
+      },
+
+      // 3) Drive Spokane -> Coeur d'Alene (Jan 27)
+      {
+        airportFrom: 'Spokane, Washington',
+        airportTo: "Coeur d'Alene, Idaho",
+        latFrom: 47.6588,
+        lonFrom: -117.426,
+        latTo: 47.6777,
+        lonTo: -116.7805,
+        date: '2024-01-27T20:00:00Z', // 12 PM PST
+        duration: 80, // 1h 20m (approx)
+        type: 'car'
+      },
+
+      // 4) Stay / hang out in Coeur d'Alene for 6 hours
+      {
+        airportFrom: "Coeur d'Alene, Idaho",
+        airportTo: "Coeur d'Alene, Idaho",
+        latFrom: 47.6777,
+        lonFrom: -116.7805,
+        latTo: 47.6777,
+        lonTo: -116.7805,
+        date: '2024-01-27T21:20:00Z', // arrival + few minutes
+        duration: 360, // 6 hours
+        type: 'stay'
+      },
+
+      // 5) Drive Coeur d'Alene -> Spokane at 7 PM
+      {
+        airportFrom: "Coeur d'Alene, Idaho",
+        airportTo: 'Spokane, Washington',
+        latFrom: 47.6777,
+        lonFrom: -116.7805,
+        latTo: 47.6588,
+        lonTo: -117.426,
+        date: '2024-01-28T03:00:00Z', // 7 PM PST
+        duration: 60, // 1 hour
+        type: 'car'
+      },
+
+      // 6) Second hotel night in Spokane (Jan 27–28)
+      {
+        airportFrom: 'Oxford Suites Spokane (Riverside area)',
+        airportTo: 'Oxford Suites Spokane (Riverside area)',
+        latFrom: 47.6581,
+        lonFrom: -117.4106,
+        latTo: 47.6581,
+        lonTo: -117.4106,
+        date: '2024-01-28T04:00:00Z', // after return ~8 PM PST
+        duration: 930, // until departure at 8:45 PM next day
+        type: 'stay'
+      },
+
+      // 7) Drive Spokane -> Seattle (Jan 28, 8:45 PM, 6 hr drive)
+      {
+        airportFrom: 'Spokane, Washington',
+        airportTo: 'Seattle, Washington',
+        latFrom: 47.6588,
+        lonFrom: -117.426,
+        latTo: 47.6062,
+        lonTo: -122.3321,
+        date: '2024-01-29T04:45:00Z', // 8:45 PM PST
+        duration: 360, // 6 hours
+        type: 'car'
+      }
+    ]
   }
 ]
 
