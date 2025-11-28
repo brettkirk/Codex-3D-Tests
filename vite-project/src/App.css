@@ -98,6 +98,21 @@ select {
   accent-color: #38bdf8;
 }
 
+.toggle-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
 .play-toggle {
   padding: 0.55rem 0.95rem;
   border-radius: 10px;
