@@ -808,7 +808,20 @@ const TRIPS = [
         type: 'flight'
       },
 
-      // 2) Stay in Lewistown, MT (hotel / house stay)
+      // 2) Drive BZN -> Lewistown (3 hours)
+      {
+        airportFrom: 'Bozeman Yellowstone International Airport (BZN)',
+        airportTo: 'Lewistown, Montana',
+        latFrom: 45.7769,
+        lonFrom: -111.1530,
+        latTo: 47.0622,
+        lonTo: -109.4282,
+        date: '2022-07-29T17:30:00Z', // late morning/early afternoon after arrival
+        duration: 180, // 3 hours
+        type: 'car'
+      },
+
+      // 3) Stay in Lewistown, MT (hotel / house stay)
       {
         airportFrom: 'Lewistown, Montana',
         airportTo: 'Lewistown, Montana',
@@ -817,11 +830,24 @@ const TRIPS = [
         latTo: 47.0622,
         lonTo: -109.4282,
         date: '2022-07-29T21:00:00Z', // 3:00 PM MDT
-        duration: 4140, // from afternoon 7/29 → departure afternoon 8/1
+        duration: 4050, // from afternoon 7/29 → departure late morning 8/1
         type: 'stay'
       },
 
-      // 3) Flight BZN -> SEA
+      // 4) Drive Lewistown -> BZN (3 hours)
+      {
+        airportFrom: 'Lewistown, Montana',
+        airportTo: 'Bozeman Yellowstone International Airport (BZN)',
+        latFrom: 47.0622,
+        lonFrom: -109.4282,
+        latTo: 45.7769,
+        lonTo: -111.1530,
+        date: '2022-08-01T16:30:00Z', // morning departure to catch afternoon flight
+        duration: 180, // 3 hours
+        type: 'car'
+      },
+
+      // 5) Flight BZN -> SEA
       {
         airportFrom: 'Bozeman Yellowstone International Airport (BZN)',
         airportTo: 'Seattle–Tacoma International Airport (SEA)',
