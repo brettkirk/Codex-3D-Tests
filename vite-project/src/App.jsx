@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import './App.css'
 
 const MAP_ENDPOINTS = {
@@ -1511,8 +1511,11 @@ function App() {
   const [geographies, setGeographies] = useState(null)
   const [status, setStatus] = useState('booting')
   const [selectedTrip, setSelectedTrip] = useState('all')
+  const [travelScope, setTravelScope] = useState('all')
   const [sliderValue, setSliderValue] = useState(100)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [showRoutes, setShowRoutes] = useState(true)
+  const [showMarkers, setShowMarkers] = useState(true)
   const [hoveredRegion, setHoveredRegion] = useState(null)
   const rafRef = useRef(null)
   const lastTickRef = useRef(null)
@@ -1523,36 +1526,51 @@ function App() {
   )
 
   const segments = useMemo(() => buildSegments(sortedTrips), [sortedTrips])
-  const visits = useMemo(() => buildVisitCounts(segments), [segments])
-
-  const visitsByTrip = useMemo(() => {
-    const byTrip = new Map()
-
-    sortedTrips.forEach(({ tripName }) => {
-      byTrip.set(
-        tripName,
-        buildVisitCounts(
-          segments.filter((segment) => segment.tripName === tripName),
-        ),
-      )
-    })
-
-    byTrip.set('all', visits)
-
-    return byTrip
-  }, [segments, sortedTrips, visits])
-
-  const visitsForSelection = useMemo(
-    () => visitsByTrip.get(selectedTrip) ?? visits,
-    [selectedTrip, visits, visitsByTrip],
+  const tripByName = useMemo(
+    () => new Map(sortedTrips.map((trip) => [trip.tripName, trip])),
+    [sortedTrips],
   )
 
-  const selectedSegments = useMemo(
-    () =>
+  const matchesScope = useCallback(
+    (trip) => {
+      if (!trip) return false
+      const domestic = trip.countries.every(
+        (country) => country.toLowerCase() === 'united states of america',
+      )
+      if (travelScope === 'domestic') return domestic
+      if (travelScope === 'international') return !domestic
+      return true
+    },
+    [travelScope],
+  )
+
+  const availableTrips = useMemo(
+    () => sortedTrips.filter((trip) => matchesScope(trip)),
+    [matchesScope, sortedTrips],
+  )
+
+  useEffect(() => {
+    if (selectedTrip === 'all') return
+    if (!availableTrips.some((trip) => trip.tripName === selectedTrip)) {
+      setSelectedTrip('all')
+    }
+  }, [availableTrips, selectedTrip])
+
+  const selectedSegments = useMemo(() => {
+    const allowedTripNames =
       selectedTrip === 'all'
-        ? segments
-        : segments.filter((segment) => segment.tripName === selectedTrip),
-    [segments, selectedTrip],
+        ? new Set(availableTrips.map((trip) => trip.tripName))
+        : new Set([selectedTrip])
+
+    return segments.filter((segment) => {
+      const trip = tripByName.get(segment.tripName)
+      return matchesScope(trip) && allowedTripNames.has(segment.tripName)
+    })
+  }, [availableTrips, matchesScope, segments, selectedTrip, tripByName])
+
+  const visitsForSelection = useMemo(
+    () => buildVisitCounts(selectedSegments),
+    [selectedSegments],
   )
 
   const timeExtent = useMemo(
@@ -1584,10 +1602,10 @@ function App() {
 
   const filteredVisits = useMemo(
     () =>
-      visitsForSelection
-        .filter((visit) => !currentDate || visit.firstDate.getTime() <= currentDate.getTime())
-        .filter((visit) => (selectedTrip === 'all' ? true : visit.trips.has(selectedTrip))),
-    [currentDate, selectedTrip, visitsForSelection],
+      visitsForSelection.filter(
+        (visit) => !currentDate || visit.firstDate.getTime() <= currentDate.getTime(),
+      ),
+    [currentDate, visitsForSelection],
   )
 
   const countryVisits = useMemo(() => {
@@ -1788,54 +1806,65 @@ function App() {
       .attr('class', 'state-borders')
       .attr('d', path(geographies.stateMesh))
 
-    routeSelection = zoomLayer
-      .append('g')
-      .attr('class', 'routes')
-      .selectAll('path')
-      .data(timedSegments)
-      .join('path')
-      .attr('d', (segment) => {
-        const interpolator = libs.d3.geoInterpolate(
-          [segment.start.lon, segment.start.lat],
-          [segment.end.lon, segment.end.lat],
+    if (showRoutes) {
+      routeSelection = zoomLayer
+        .append('g')
+        .attr('class', 'routes')
+        .selectAll('path')
+        .data(timedSegments)
+        .join('path')
+        .attr('d', (segment) => {
+          const interpolator = libs.d3.geoInterpolate(
+            [segment.start.lon, segment.start.lat],
+            [segment.end.lon, segment.end.lat],
+          )
+          const coordinates = [
+            [segment.start.lon, segment.start.lat],
+            segment.progress >= 1 ? [segment.end.lon, segment.end.lat] : interpolator(segment.progress),
+          ]
+
+          return path({ type: 'LineString', coordinates })
+        })
+        .attr('class', (segment) => `route route-${segment.type}`)
+        .attr('stroke', (segment) => segment.color)
+        .attr(
+          'stroke-width',
+          (segment) => routeWidth(segment) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1),
         )
-        const coordinates = [
-          [segment.start.lon, segment.start.lat],
-          segment.progress >= 1 ? [segment.end.lon, segment.end.lat] : interpolator(segment.progress),
-        ]
+        .attr('stroke-dasharray', (segment) => TRANSPORT_STYLES[segment.type]?.strokeDasharray || '0')
 
-        return path({ type: 'LineString', coordinates })
-      })
-      .attr('class', (segment) => `route route-${segment.type}`)
-      .attr('stroke', (segment) => segment.color)
-      .attr('stroke-width', (segment) => routeWidth(segment) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
-      .attr('stroke-dasharray', (segment) => TRANSPORT_STYLES[segment.type]?.strokeDasharray || '0')
+      routeSelection
+        .append('title')
+        .text(
+          (segment) =>
+            `${segment.tripName}: ${segment.airportFrom} → ${segment.airportTo}\n${formatDate(segment.date)} · ${TRANSPORT_STYLES[segment.type]?.label || segment.type}`,
+        )
+    }
 
-    routeSelection
-      .append('title')
-      .text(
-        (segment) =>
-          `${segment.tripName}: ${segment.airportFrom} → ${segment.airportTo}\n${formatDate(segment.date)} · ${TRANSPORT_STYLES[segment.type]?.label || segment.type}`,
-      )
+    if (showMarkers) {
+      markerSelection = zoomLayer
+        .append('g')
+        .attr('class', 'markers')
+        .selectAll('circle')
+        .data(filteredVisits)
+        .join('circle')
+        .attr('cx', (visit) => projection([visit.lon, visit.lat])[0])
+        .attr('cy', (visit) => projection([visit.lon, visit.lat])[1])
+        .attr('r', (visit) => markerRadius(visit) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
+        .attr('fill', (visit) => withOpacity(visit.color, 0.85))
+        .attr('stroke', '#0b1020')
+        .attr('stroke-width', 0.8)
 
-    markerSelection = zoomLayer
-      .append('g')
-      .attr('class', 'markers')
-      .selectAll('circle')
-      .data(filteredVisits)
-      .join('circle')
-      .attr('cx', (visit) => projection([visit.lon, visit.lat])[0])
-      .attr('cy', (visit) => projection([visit.lon, visit.lat])[1])
-      .attr('r', (visit) => markerRadius(visit) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
-      .attr('fill', (visit) => visit.color)
-      .attr('fill-opacity', 0.82)
-      .attr('stroke', 'rgba(0,0,0,0.45)')
-      .attr('stroke-width', 0.5)
-
-    markerSelection
-      .append('title')
-      .text((visit) => `${visit.label || 'Stop'} · ${visit.visits} visit(s)\n${Array.from(visit.trips).join(', ')}`)
-  }, [libs, geographies, currentDate, timedSegments, filteredVisits, countryVisits, stateVisits])
+      markerSelection
+        .append('title')
+        .text(
+          (visit) =>
+            `${visit.label}\n${visit.trips.size} trip${visit.trips.size === 1 ? '' : 's'} · ${visit.visits} visit${visit.visits === 1 ? '' : 's'}\nFirst: ${formatDate(
+              visit.firstDate,
+            )}${visit.lastDate ? `\nLast: ${formatDate(visit.lastDate)}` : ''}`,
+        )
+    }
+  }, [countryVisits, currentDate, filteredVisits, geographies, libs, showMarkers, showRoutes, stateVisits, timedSegments])
 
   useEffect(() => {
     if (!isPlaying || !timeExtent) return () => {}
@@ -1887,7 +1916,7 @@ function App() {
     if (!timeExtent) return ''
     const [min, max] = timeExtent
     return `${formatDate(min)} → ${formatDate(max)} · ${selectedSegments.length} segments · ${visitsForSelection.length} stops`
-  }, [timeExtent, selectedSegments.length, visitsForSelection.length])
+  }, [selectedSegments.length, timeExtent, visitsForSelection.length])
 
   const sliderLabel = currentDate ? formatDate(currentDate) : 'Loading map…'
 
@@ -1895,21 +1924,35 @@ function App() {
     <div className="page">
       <header className="hero">
         <div className="copy">
-          <p className="eyebrow">D3-driven world map</p>
-          <h1>Interactive travel canvas</h1>
+          <p className="eyebrow">Cody + Brett adventures</p>
+          <h1>Shared trips around the world</h1>
           <p className="lede">
-            A 2D view that replaces the globe with an SVG map. It is designed to house future time sliders, animated
-            connections, scalable visit markers, and per-trip highlighting for both countries and states.
+            Every marker and path represents a journey that Cody and Brett took together — from hometown road trips to
+            river cruises and long-haul flights. Use the filters to zoom in on domestic getaways or international
+            stretches, or replay their timeline to watch each stop appear.
           </p>
           <p className="summary">{heroSummary}</p>
 
           <div className="controls">
+            <label className="control-label" htmlFor="travel-scope">
+              Travel scope
+            </label>
+            <select
+              id="travel-scope"
+              value={travelScope}
+              onChange={(event) => setTravelScope(event.target.value)}
+            >
+              <option value="all">All trips</option>
+              <option value="domestic">Domestic only</option>
+              <option value="international">International only</option>
+            </select>
+
             <label className="control-label" htmlFor="trip">
               Focus trip
             </label>
             <select id="trip" value={selectedTrip} onChange={(event) => setSelectedTrip(event.target.value)}>
               <option value="all">All trips</option>
-              {sortedTrips.map((trip) => (
+              {availableTrips.map((trip) => (
                 <option key={trip.tripName} value={trip.tripName}>
                   {trip.tripName}
                 </option>
@@ -1932,6 +1975,25 @@ function App() {
                 onChange={(event) => setSliderValue(Number(event.target.value))}
               />
               <span className="slider-label">{sliderLabel}</span>
+            </div>
+
+            <div className="toggle-row">
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={showRoutes}
+                  onChange={(event) => setShowRoutes(event.target.checked)}
+                />
+                <span>Show paths</span>
+              </label>
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={showMarkers}
+                  onChange={(event) => setShowMarkers(event.target.checked)}
+                />
+                <span>Show markers</span>
+              </label>
             </div>
           </div>
 
