@@ -277,6 +277,122 @@ const TRIPS = [
     ],
   },
   {
+    tripName: 'Nocturnal Wonderland 2022',
+    color: '#FB923C', // placeholder
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) SEA -> ONT (Sept 16, 7 AM, ~2 hr)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Ontario International Airport (ONT)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 34.056,
+        lonTo: -117.6012,
+        date: '2022-09-16T14:00:00Z', // 7 AM PDT
+        duration: 120,
+        type: 'flight',
+      },
+
+      // 2) Stay at Airbnb (Sept 16–19)
+      {
+        airportFrom: 'Ontario, California (Airbnb)',
+        airportTo: 'Ontario, California (Airbnb)',
+        latFrom: 34.0633,
+        lonFrom: -117.6509,
+        latTo: 34.0633,
+        lonTo: -117.6509,
+        date: '2022-09-16T22:00:00Z', // assuming 3 PM PDT check-in
+        duration: 4320, // 3 days until 3 PM 9/19
+        type: 'stay',
+      },
+
+      // 3) ONT -> SEA (Sept 19, 4:30 PM, ~2 hrs)
+      {
+        airportFrom: 'Ontario International Airport (ONT)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 34.056,
+        lonFrom: -117.6012,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2022-09-19T23:30:00Z', // 4:30 PM PDT
+        duration: 120,
+        type: 'flight',
+      },
+    ],
+  },
+  {
+    tripName: 'Todrick in Texas 2022',
+    color: '#E11D48', // placeholder
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) SEA -> AUS (Mar 24, 10 AM, 3.5 hrs)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Austin–Bergstrom International Airport (AUS)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 30.1945,
+        lonTo: -97.6699,
+        date: '2022-03-24T17:00:00Z', // 10 AM PDT
+        duration: 210, // 3.5 hours
+        type: 'flight',
+      },
+
+      // 2) Stay with friends in Austin (Mar 24 → afternoon Mar 26)
+      {
+        airportFrom: 'Austin, Texas',
+        airportTo: 'Austin, Texas',
+        latFrom: 30.2672,
+        lonFrom: -97.7431,
+        latTo: 30.2672,
+        lonTo: -97.7431,
+        date: '2022-03-24T20:30:00Z', // after arrival
+        duration: 3300, // until approx 2 PM Mar 26
+        type: 'stay',
+      },
+
+      // 3) Drive Austin → Dallas (Mar 26, ~2 PM)
+      {
+        airportFrom: 'Austin, Texas',
+        airportTo: 'Dallas, Texas',
+        latFrom: 30.2672,
+        lonFrom: -97.7431,
+        latTo: 32.7767,
+        lonTo: -96.797,
+        date: '2022-03-26T19:00:00Z', // 2 PM CDT
+        duration: 195, // ~3h 15m typical
+        type: 'car',
+      },
+
+      // 4) Stay overnight in Dallas (Mar 26 → 27)
+      {
+        airportFrom: 'Dallas, Texas',
+        airportTo: 'Dallas, Texas',
+        latFrom: 32.7767,
+        lonFrom: -96.797,
+        latTo: 32.7767,
+        lonTo: -96.797,
+        date: '2022-03-26T22:15:00Z', // approx arrival
+        duration: 1140, // until flight evening Mar 27
+        type: 'stay',
+      },
+
+      // 5) DFW -> SEA (Mar 27, 7:30 PM, 4 hrs)
+      {
+        airportFrom: 'Dallas/Fort Worth International Airport (DFW)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 32.89748,
+        lonFrom: -97.040443,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2022-03-28T02:30:00Z', // 7:30 PM CDT
+        duration: 240,
+        type: 'flight',
+      },
+    ],
+  },
+  {
     tripName: 'Europe Trip 2023',
     color: '#4F46E5',
     countries: ['United States of America', 'United Kingdom', 'France', 'Spain', 'Ireland'],
