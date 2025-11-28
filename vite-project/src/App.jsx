@@ -1997,6 +1997,25 @@ function App() {
             </div>
           </div>
 
+        </div>
+
+        <div className="side-stack">
+          <div className="status-panel">
+            <div className="panel-row">
+              <span className="label">Hovered</span>
+              <span className="value">{hoveredRegion ? `${hoveredRegion.type}: ${hoveredRegion.name}` : 'None'}</span>
+            </div>
+            <div className="panel-row">
+              <span className="label">Segments shown</span>
+              <span className="value">{timedSegments.length}</span>
+            </div>
+            <div className="panel-row">
+              <span className="label">Markers shown</span>
+              <span className="value">{filteredVisits.length}</span>
+            </div>
+            <div className="panel-row subtle">Remote D3 + TopoJSON imports enable a minimal footprint today and can be replaced with local packages later.</div>
+          </div>
+
           <div className="legend">
             <div className="legend-row">
               <span className="swatch" />
@@ -2020,22 +2039,6 @@ function App() {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="status-panel">
-          <div className="panel-row">
-            <span className="label">Hovered</span>
-            <span className="value">{hoveredRegion ? `${hoveredRegion.type}: ${hoveredRegion.name}` : 'None'}</span>
-          </div>
-          <div className="panel-row">
-            <span className="label">Segments shown</span>
-            <span className="value">{timedSegments.length}</span>
-          </div>
-          <div className="panel-row">
-            <span className="label">Markers shown</span>
-            <span className="value">{filteredVisits.length}</span>
-          </div>
-          <div className="panel-row subtle">Remote D3 + TopoJSON imports enable a minimal footprint today and can be replaced with local packages later.</div>
         </div>
       </header>
 
