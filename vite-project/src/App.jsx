@@ -2215,6 +2215,62 @@ function App() {
   }, [countryVisits, currentDate, filteredVisits, geographies, libs, showMarkers, showRoutes, stateVisits, timedSegments])
 
   useEffect(() => {
+    if (!libs || !geographies) return undefined
+
+    const { d3 } = libs
+    const svg = svgRef.current
+    const zoomBehavior = zoomBehaviorRef.current
+    const container = containerRef.current
+
+    if (!svg || !zoomBehavior || !container) return undefined
+
+    const width = container.clientWidth
+    const height = Math.max(520, Math.round(width * 0.55))
+    const projection = d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' })
+    const path = d3.geoPath(projection)
+    const transition = d3.select(svg).transition().duration(600).ease(d3.easeCubicOut)
+
+    const resetTransform = () => {
+      const transform = d3.zoomIdentity
+      lastTransformRef.current = transform
+      transition.call(zoomBehavior.transform, transform)
+    }
+
+    if (travelScope !== 'domestic') {
+      resetTransform()
+      return undefined
+    }
+
+    const unitedStates = geographies.countries.features.find(
+      (country) => normalizeCountryName(country.properties?.name ?? country.id) === 'United States of America',
+    )
+
+    if (!unitedStates) {
+      resetTransform()
+      return undefined
+    }
+
+    const [[x0, y0], [x1, y1]] = path.bounds(unitedStates)
+    const dx = x1 - x0
+    const dy = y1 - y0
+    const padding = 40
+    const scale = Math.min(
+      zoomBehavior.scaleExtent()[1],
+      0.95 * Math.min(width / (dx + padding), height / (dy + padding)),
+    )
+
+    const transform = d3
+      .zoomIdentity
+      .translate(width / 2 - scale * ((x0 + x1) / 2), height / 2 - scale * ((y0 + y1) / 2))
+      .scale(scale)
+
+    lastTransformRef.current = transform
+    transition.call(zoomBehavior.transform, transform)
+
+    return undefined
+  }, [geographies, libs, travelScope])
+
+  useEffect(() => {
     if (!isPlaying || !timeExtent) return () => {}
 
     const step = (timestamp) => {
