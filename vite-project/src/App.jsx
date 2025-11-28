@@ -7,6 +7,8 @@ const MAP_ENDPOINTS = {
   states: 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json',
 }
 
+const NON_CONTIGUOUS_STATE_IDS = new Set([2, 15, 60, 66, 69, 72, 78])
+
 const PLAY_DURATION_MS = 16000
 
 const TRIPS = [
@@ -2245,12 +2247,37 @@ function App() {
       (country) => normalizeCountryName(country.properties?.name ?? country.id) === 'United States of America',
     )
 
-    if (!unitedStates) {
+    const getBoundsForFeatures = (features) => {
+      if (!features?.length) return null
+
+      return features.reduce(
+        (bounds, feature) => {
+          const [[x0, y0], [x1, y1]] = path.bounds(feature)
+          return [
+            [Math.min(bounds[0][0], x0), Math.min(bounds[0][1], y0)],
+            [Math.max(bounds[1][0], x1), Math.max(bounds[1][1], y1)],
+          ]
+        },
+        [
+          [Infinity, Infinity],
+          [-Infinity, -Infinity],
+        ],
+      )
+    }
+
+    const contiguousStates = geographies.states.features.filter(
+      (feature) => !NON_CONTIGUOUS_STATE_IDS.has(feature.id),
+    )
+
+    const bounds =
+      getBoundsForFeatures(contiguousStates) ?? (unitedStates ? path.bounds(unitedStates) : null)
+
+    if (!bounds) {
       resetTransform()
       return undefined
     }
 
-    const [[x0, y0], [x1, y1]] = path.bounds(unitedStates)
+    const [[x0, y0], [x1, y1]] = bounds
     const dx = x1 - x0
     const dy = y1 - y0
     const padding = 40
