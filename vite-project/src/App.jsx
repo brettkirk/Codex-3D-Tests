@@ -2074,10 +2074,13 @@ function App() {
     const [lon, lat] = interpolator(Math.min(1, Math.max(0, activeSegment.progress)))
     const targetRotation = [-lon, -lat, globeRotation[2] ?? 0]
 
+    const normalizeDelta = (delta) => ((delta + 180) % 360 + 360) % 360 - 180
+
     setGlobeRotation(([lambda, phi, roll = 0]) => {
       const blend = 0.16
+      const lambdaDelta = normalizeDelta(targetRotation[0] - lambda)
       return [
-        lambda + (targetRotation[0] - lambda) * blend,
+        lambda + lambdaDelta * blend,
         phi + (targetRotation[1] - phi) * blend,
         roll,
       ]
