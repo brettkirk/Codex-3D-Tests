@@ -7,7 +7,12 @@ const MAP_ENDPOINTS = {
   states: 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json',
 }
 
-const PLAY_DURATION_MS = 16000
+const PLAYBACK_OPTIONS = [
+  { label: '15 seconds', value: 15000 },
+  { label: '30 seconds', value: 30000 },
+  { label: '45 seconds', value: 45000 },
+  { label: '1 minute', value: 60000 },
+]
 
 const TRIPS = [
   {
@@ -1863,6 +1868,7 @@ function App() {
   const [travelScope, setTravelScope] = useState('all')
   const [sliderValue, setSliderValue] = useState(100)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [playDurationMs, setPlayDurationMs] = useState(PLAYBACK_OPTIONS[0].value)
   const [showRoutes, setShowRoutes] = useState(true)
   const [showMarkers, setShowMarkers] = useState(true)
   const [mapMode, setMapMode] = useState('flat')
@@ -2335,7 +2341,7 @@ function App() {
       lastTickRef.current = timestamp
 
       setSliderValue((previous) => {
-        const next = previous + (elapsed / PLAY_DURATION_MS) * 100
+        const next = previous + (elapsed / playDurationMs) * 100
         if (next >= 100) {
           setIsPlaying(false)
           return 100
@@ -2353,7 +2359,7 @@ function App() {
       rafRef.current = null
       lastTickRef.current = null
     }
-  }, [isPlaying, timeExtent])
+  }, [isPlaying, playDurationMs, timeExtent])
 
   useEffect(() => {
     if (!isPlaying) return
@@ -2439,6 +2445,20 @@ function App() {
               </button>
             </div>
 
+            <label className="control-label" htmlFor="playback-duration">
+              Playback duration
+            </label>
+            <select
+              id="playback-duration"
+              value={playDurationMs}
+              onChange={(event) => setPlayDurationMs(Number(event.target.value))}
+            >
+              {PLAYBACK_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
             <label className="control-label" htmlFor="timeline">
               Timeline preview
             </label>
