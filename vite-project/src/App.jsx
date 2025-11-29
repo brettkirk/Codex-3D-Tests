@@ -7,8 +7,6 @@ const MAP_ENDPOINTS = {
   states: 'https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json',
 }
 
-const NON_CONTIGUOUS_STATE_IDS = new Set([2, 15, 60, 66, 69, 72, 78])
-
 const PLAY_DURATION_MS = 16000
 
 const TRIPS = [
@@ -2071,21 +2069,12 @@ function App() {
     let markerSelection = null
     let routeSelection = null
 
-    const DOMESTIC_ZOOM_MODIFIER = d3.zoomIdentity
-      .translate(-1459.3920596675057, -911.0815929010673)
-      .scale(6.196857045786471)
-
     const zoomBehavior = zoomBehaviorRef.current ?? d3.zoom().scaleExtent([1, 8])
     zoomBehavior.on('zoom', (event) => {
-      const combinedTransform =
-        travelScope === 'domestic'
-          ? event.transform.multiply(DOMESTIC_ZOOM_MODIFIER)
-          : event.transform
+      zoomLayer.attr('transform', event.transform)
+      lastTransformRef.current = event.transform
 
-      zoomLayer.attr('transform', combinedTransform)
-      lastTransformRef.current = combinedTransform
-
-      const zoomFactor = zoomSizeAdjustment(combinedTransform.k)
+      const zoomFactor = zoomSizeAdjustment(event.transform.k)
 
       if (routeSelection) {
         routeSelection.attr('stroke-width', (segment) => routeWidth(segment) / zoomFactor)
@@ -2223,99 +2212,7 @@ function App() {
             )}${visit.lastDate ? `\nLast: ${formatDate(visit.lastDate)}` : ''}`,
         )
     }
-  }, [
-    countryVisits,
-    currentDate,
-    filteredVisits,
-    geographies,
-    libs,
-    showMarkers,
-    showRoutes,
-    stateVisits,
-    timedSegments,
-    travelScope,
-  ])
-
-  useEffect(() => {
-    if (!libs || !geographies) return undefined
-
-    const { d3 } = libs
-    const svg = svgRef.current
-    const zoomBehavior = zoomBehaviorRef.current
-    const container = containerRef.current
-
-    if (!svg || !zoomBehavior || !container) return undefined
-
-    const width = container.clientWidth
-    const height = Math.max(520, Math.round(width * 0.55))
-    const projection = d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' })
-    const path = d3.geoPath(projection)
-    const transition = d3.select(svg).transition().duration(600).ease(d3.easeCubicOut)
-
-    const resetTransform = () => {
-      const transform = d3.zoomIdentity
-      lastTransformRef.current = transform
-      transition.call(zoomBehavior.transform, transform)
-    }
-
-    if (travelScope !== 'domestic') {
-      resetTransform()
-      return undefined
-    }
-
-    const unitedStates = geographies.countries.features.find(
-      (country) => normalizeCountryName(country.properties?.name ?? country.id) === 'United States of America',
-    )
-
-    const getBoundsForFeatures = (features) => {
-      if (!features?.length) return null
-
-      return features.reduce(
-        (bounds, feature) => {
-          const [[x0, y0], [x1, y1]] = path.bounds(feature)
-          return [
-            [Math.min(bounds[0][0], x0), Math.min(bounds[0][1], y0)],
-            [Math.max(bounds[1][0], x1), Math.max(bounds[1][1], y1)],
-          ]
-        },
-        [
-          [Infinity, Infinity],
-          [-Infinity, -Infinity],
-        ],
-      )
-    }
-
-    const contiguousStates = geographies.states.features.filter(
-      (feature) => !NON_CONTIGUOUS_STATE_IDS.has(feature.id),
-    )
-
-    const bounds =
-      getBoundsForFeatures(contiguousStates) ?? (unitedStates ? path.bounds(unitedStates) : null)
-
-    if (!bounds) {
-      resetTransform()
-      return undefined
-    }
-
-    const [[x0, y0], [x1, y1]] = bounds
-    const dx = x1 - x0
-    const dy = y1 - y0
-    const padding = 40
-    const scale = Math.min(
-      zoomBehavior.scaleExtent()[1],
-      0.95 * Math.min(width / (dx + padding), height / (dy + padding)),
-    )
-
-    const transform = d3
-      .zoomIdentity
-      .translate(width / 2 - scale * ((x0 + x1) / 2), height / 2 - scale * ((y0 + y1) / 2))
-      .scale(scale)
-
-    lastTransformRef.current = transform
-    transition.call(zoomBehavior.transform, transform)
-
-    return undefined
-  }, [geographies, libs, travelScope])
+  }, [countryVisits, currentDate, filteredVisits, geographies, libs, showMarkers, showRoutes, stateVisits, timedSegments])
 
   useEffect(() => {
     if (!isPlaying || !timeExtent) return () => {}
