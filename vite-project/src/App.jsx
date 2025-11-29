@@ -1759,6 +1759,7 @@ const buildSegments = (trips) => {
       const endDate = new Date(date.getTime() + durationMs)
       segments.push({
         ...leg,
+        id: `${trip.tripName}-${segments.length}`,
         tripName: trip.tripName,
         color: trip.color,
         start,
@@ -2105,9 +2106,8 @@ function App() {
       : d3.zoomIdentity.scale(globeZoomRef.current)
 
     svg.attr('viewBox', `0 0 ${width} ${height}`)
-    svg.selectAll('*').remove()
 
-    const zoomLayer = svg.append('g').attr('class', 'zoom-layer')
+    const zoomLayer = svg.selectAll('g.zoom-layer').data([null]).join('g').attr('class', 'zoom-layer')
     const globeBaseScale = Math.min(width, height) * 0.42
     const projection = isFlatMap
       ? d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' })
@@ -2199,20 +2199,23 @@ function App() {
     }
 
     zoomLayer
-      .append('path')
+      .selectAll('path.map-outline')
+      .data([null])
+      .join('path')
       .attr('class', 'map-outline')
       .attr('d', path({ type: 'Sphere' }))
 
     zoomLayer
-      .append('path')
+      .selectAll('path.graticule')
+      .data([null])
+      .join('path')
       .attr('class', 'graticule')
       .attr('d', path(graticule))
 
-    zoomLayer
-      .append('g')
-      .attr('class', 'countries')
+    const countryGroup = zoomLayer.selectAll('g.countries').data([null]).join('g').attr('class', 'countries')
+    countryGroup
       .selectAll('path')
-      .data(geographies.countries.features)
+      .data(geographies.countries.features, (feature) => feature.id)
       .join('path')
       .attr('d', path)
       .attr('fill', (d) => {
@@ -2234,15 +2237,16 @@ function App() {
       .on('mouseleave', () => setHoveredRegion(null))
 
     zoomLayer
-      .append('path')
+      .selectAll('path.country-borders')
+      .data([geographies.countryMesh])
+      .join('path')
       .attr('class', 'country-borders')
-      .attr('d', path(geographies.countryMesh))
+      .attr('d', path)
 
-    zoomLayer
-      .append('g')
-      .attr('class', 'states')
+    const stateGroup = zoomLayer.selectAll('g.states').data([null]).join('g').attr('class', 'states')
+    stateGroup
       .selectAll('path')
-      .data(geographies.states.features)
+      .data(geographies.states.features, (feature) => feature.id)
       .join('path')
       .attr('d', path)
       .attr('fill', (feature) => {
@@ -2259,68 +2263,65 @@ function App() {
       .on('mouseleave', () => setHoveredRegion(null))
 
     zoomLayer
-      .append('path')
+      .selectAll('path.state-borders')
+      .data([geographies.stateMesh])
+      .join('path')
       .attr('class', 'state-borders')
-      .attr('d', path(geographies.stateMesh))
+      .attr('d', path)
 
-    if (showRoutes) {
-      routeSelection = zoomLayer
-        .append('g')
-        .attr('class', 'routes')
-        .selectAll('path')
-        .data(timedSegments)
-        .join('path')
-        .attr('d', (segment) => {
-          const interpolator = libs.d3.geoInterpolate(
-            [segment.start.lon, segment.start.lat],
-            [segment.end.lon, segment.end.lat],
-          )
-          const coordinates = [
-            [segment.start.lon, segment.start.lat],
-            segment.progress >= 1 ? [segment.end.lon, segment.end.lat] : interpolator(segment.progress),
-          ]
-
-          return path({ type: 'LineString', coordinates })
-        })
-        .attr('class', (segment) => `route route-${segment.type}`)
-        .attr('stroke', (segment) => segment.color)
-        .attr(
-          'stroke-width',
-          (segment) => routeWidth(segment) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1),
+    const routesGroup = zoomLayer.selectAll('g.routes').data([null]).join('g').attr('class', 'routes')
+    routeSelection = routesGroup
+      .selectAll('path')
+      .data(showRoutes ? timedSegments : [], (segment) => segment?.id ?? `${segment.tripName}-${segment.date.toISOString()}`)
+      .join('path')
+      .attr('d', (segment) => {
+        const interpolator = libs.d3.geoInterpolate(
+          [segment.start.lon, segment.start.lat],
+          [segment.end.lon, segment.end.lat],
         )
-        .attr('stroke-dasharray', (segment) => TRANSPORT_STYLES[segment.type]?.strokeDasharray || '0')
+        const coordinates = [
+          [segment.start.lon, segment.start.lat],
+          segment.progress >= 1 ? [segment.end.lon, segment.end.lat] : interpolator(segment.progress),
+        ]
 
-      routeSelection
-        .append('title')
-        .text(
-          (segment) =>
-            `${segment.tripName}: ${segment.airportFrom} → ${segment.airportTo}\n${formatDate(segment.date)} · ${TRANSPORT_STYLES[segment.type]?.label || segment.type}`,
-        )
-    }
+        return path({ type: 'LineString', coordinates })
+      })
+      .attr('class', (segment) => `route route-${segment.type}`)
+      .attr('stroke', (segment) => segment.color)
+      .attr('stroke-width', (segment) => routeWidth(segment) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
+      .attr('stroke-dasharray', (segment) => TRANSPORT_STYLES[segment.type]?.strokeDasharray || '0')
 
-    if (showMarkers) {
-      markerSelection = zoomLayer
-        .append('g')
-        .attr('class', 'markers')
-        .selectAll('circle')
-        .data(visibleVisits)
-        .join('circle')
-        .attr('cx', (visit) => visit.projected[0])
-        .attr('cy', (visit) => visit.projected[1])
-        .attr('r', (visit) => markerRadius(visit) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
-        .attr('fill', (visit) => withOpacity(visit.color, 0.85))
-        .attr('stroke', '#0b1020')
-        .attr('stroke-width', 0.8)
+    routeSelection
+      .selectAll('title')
+      .data((segment) => [segment])
+      .join('title')
+      .text(
+        (segment) =>
+          `${segment.tripName}: ${segment.airportFrom} → ${segment.airportTo}\n${formatDate(segment.date)} · ${TRANSPORT_STYLES[segment.type]?.label || segment.type}`,
+      )
 
-      markerSelection
-        .append('title')
-        .text(
-          (visit) =>
-            `${visit.label}\n${visit.trips.size} trip${visit.trips.size === 1 ? '' : 's'} · ${visit.visits} visit${visit.visits === 1 ? '' : 's'}\nFirst: ${formatDate(
-              visit.firstDate,
-            )}${visit.lastDate ? `\nLast: ${formatDate(visit.lastDate)}` : ''}`,
-        )
-    }
+    const markersGroup = zoomLayer.selectAll('g.markers').data([null]).join('g').attr('class', 'markers')
+    markerSelection = markersGroup
+      .selectAll('circle')
+      .data(showMarkers ? visibleVisits : [], (visit) => `${visit.lat}-${visit.lon}`)
+      .join('circle')
+      .attr('cx', (visit) => visit.projected[0])
+      .attr('cy', (visit) => visit.projected[1])
+      .attr('r', (visit) => markerRadius(visit) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
+      .attr('fill', (visit) => withOpacity(visit.color, 0.85))
+      .attr('stroke', '#0b1020')
+      .attr('stroke-width', 0.8)
+
+    markerSelection
+      .selectAll('title')
+      .data((visit) => [visit])
+      .join('title')
+      .text(
+        (visit) =>
+          `${visit.label}\n${visit.trips.size} trip${visit.trips.size === 1 ? '' : 's'} · ${visit.visits} visit${visit.visits === 1 ? '' : 's'}\nFirst: ${formatDate(
+            visit.firstDate,
+          )}${visit.lastDate ? `\nLast: ${formatDate(visit.lastDate)}` : ''}`,
+      )
   }, [
     countryVisits,
     currentDate,
