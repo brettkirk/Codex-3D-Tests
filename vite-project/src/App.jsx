@@ -1854,6 +1854,7 @@ function App() {
   const containerRef = useRef(null)
   const svgRef = useRef(null)
   const zoomBehaviorRef = useRef(null)
+  const globeZoomBehaviorRef = useRef(null)
   const lastTransformRef = useRef(null)
   const [libs, setLibs] = useState(null)
   const [geographies, setGeographies] = useState(null)
@@ -1922,6 +1923,9 @@ function App() {
     () => buildVisitCounts(selectedSegments),
     [selectedSegments],
   )
+
+  const [globeZoom, setGlobeZoom] = useState(1)
+  const globeZoomRef = useRef(1)
 
   const timeExtent = useMemo(
     () => computeTimeExtent(selectedSegments),
@@ -2049,20 +2053,22 @@ function App() {
 
     const width = container.clientWidth
     const height = Math.max(520, Math.round(width * 0.55))
+    globeZoomRef.current = globeZoom
 
     const existingTransform = isFlatMap
       ? lastTransformRef.current ?? d3.zoomTransform(svg.node())
-      : d3.zoomIdentity
+      : d3.zoomIdentity.scale(globeZoomRef.current)
 
     svg.attr('viewBox', `0 0 ${width} ${height}`)
     svg.selectAll('*').remove()
 
     const zoomLayer = svg.append('g').attr('class', 'zoom-layer')
+    const globeBaseScale = Math.min(width, height) * 0.42
     const projection = isFlatMap
       ? d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' })
       : d3
           .geoOrthographic()
-          .scale(Math.min(width, height) * 0.42)
+          .scale(globeBaseScale * globeZoomRef.current)
           .translate([width / 2, height / 2])
           .rotate(globeRotation)
           .precision(0.6)
@@ -2076,7 +2082,7 @@ function App() {
       return 2.5
     }
 
-    const zoomSizeAdjustment = isFlatMap ? (k = 1) => Math.pow(k, 0.6) : () => 1
+    const zoomSizeAdjustment = isFlatMap ? (k = 1) => Math.pow(k, 0.6) : (k = 1) => k
 
     const globeCenter = !isFlatMap ? projection.invert([width / 2, height / 2]) : null
 
@@ -2117,7 +2123,24 @@ function App() {
       svg.call(zoomBehavior).call(zoomBehavior.transform, existingTransform)
     } else {
       svg.on('.zoom', null)
-      lastTransformRef.current = d3.zoomIdentity
+      lastTransformRef.current = d3.zoomIdentity.scale(globeZoomRef.current)
+
+      const zoomBehavior = globeZoomBehaviorRef.current ??
+        d3
+          .zoom()
+          .scaleExtent([0.7, 4])
+          .filter((event) => event.type === 'wheel' || event.type === 'dblclick' || event.type === 'touchmove')
+
+      zoomBehavior.on('zoom', (event) => {
+        if (!Number.isFinite(event.transform.k)) return
+        if (Math.abs(event.transform.k - globeZoomRef.current) < 1e-3) return
+        globeZoomRef.current = event.transform.k
+        setGlobeZoom(event.transform.k)
+      })
+
+      globeZoomBehaviorRef.current = zoomBehavior
+
+      svg.call(zoomBehavior).call(zoomBehavior.transform, existingTransform)
 
       const dragBehavior = d3.drag().on('drag', (event) => {
         const sensitivity = 0.25
@@ -2259,6 +2282,7 @@ function App() {
     filteredVisits,
     geographies,
     globeRotation,
+    globeZoom,
     libs,
     mapMode,
     showMarkers,
