@@ -1864,6 +1864,8 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [showRoutes, setShowRoutes] = useState(true)
   const [showMarkers, setShowMarkers] = useState(true)
+  const [mapMode, setMapMode] = useState('flat')
+  const [globeRotation, setGlobeRotation] = useState([-20, -15, 0])
   const [hoveredRegion, setHoveredRegion] = useState(null)
   const rafRef = useRef(null)
   const lastTickRef = useRef(null)
@@ -2041,19 +2043,29 @@ function App() {
     if (!libs || !geographies || !currentDate) return
 
     const { d3 } = libs
+    const isFlatMap = mapMode === 'flat'
     const container = containerRef.current
     const svg = d3.select(svgRef.current)
 
     const width = container.clientWidth
     const height = Math.max(520, Math.round(width * 0.55))
 
-    const existingTransform = lastTransformRef.current ?? d3.zoomTransform(svg.node())
+    const existingTransform = isFlatMap
+      ? lastTransformRef.current ?? d3.zoomTransform(svg.node())
+      : d3.zoomIdentity
 
     svg.attr('viewBox', `0 0 ${width} ${height}`)
     svg.selectAll('*').remove()
 
     const zoomLayer = svg.append('g').attr('class', 'zoom-layer')
-    const projection = d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' })
+    const projection = isFlatMap
+      ? d3.geoNaturalEarth1().fitSize([width, height], { type: 'Sphere' })
+      : d3
+          .geoOrthographic()
+          .scale(Math.min(width, height) * 0.42)
+          .translate([width / 2, height / 2])
+          .rotate(globeRotation)
+          .precision(0.6)
     const path = d3.geoPath(projection)
     const graticule = d3.geoGraticule10()
 
@@ -2064,30 +2076,59 @@ function App() {
       return 2.5
     }
 
-    const zoomSizeAdjustment = (k = 1) => Math.pow(k, 0.6)
+    const zoomSizeAdjustment = isFlatMap ? (k = 1) => Math.pow(k, 0.6) : () => 1
+
+    const globeCenter = !isFlatMap ? projection.invert([width / 2, height / 2]) : null
+
+    const projectVisit = (visit) => {
+      if (globeCenter && d3.geoDistance(globeCenter, [visit.lon, visit.lat]) > Math.PI / 2) return null
+
+      const projected = projection([visit.lon, visit.lat])
+      if (!projected || projected.some((value) => !Number.isFinite(value))) return null
+      return { ...visit, projected }
+    }
+
+    const visibleVisits = filteredVisits
+      .map((visit) => projectVisit(visit))
+      .filter(Boolean)
 
     let markerSelection = null
     let routeSelection = null
 
-    const zoomBehavior = zoomBehaviorRef.current ?? d3.zoom().scaleExtent([1, 8])
-    zoomBehavior.on('zoom', (event) => {
-      zoomLayer.attr('transform', event.transform)
-      lastTransformRef.current = event.transform
+    if (isFlatMap) {
+      const zoomBehavior = zoomBehaviorRef.current ?? d3.zoom().scaleExtent([1, 8])
+      zoomBehavior.on('zoom', (event) => {
+        zoomLayer.attr('transform', event.transform)
+        lastTransformRef.current = event.transform
 
-      const zoomFactor = zoomSizeAdjustment(event.transform.k)
+        const zoomFactor = zoomSizeAdjustment(event.transform.k)
 
-      if (routeSelection) {
-        routeSelection.attr('stroke-width', (segment) => routeWidth(segment) / zoomFactor)
-      }
+        if (routeSelection) {
+          routeSelection.attr('stroke-width', (segment) => routeWidth(segment) / zoomFactor)
+        }
 
-      if (markerSelection) {
-        markerSelection.attr('r', (visit) => markerRadius(visit) / zoomFactor)
-      }
-    })
+        if (markerSelection) {
+          markerSelection.attr('r', (visit) => markerRadius(visit) / zoomFactor)
+        }
+      })
 
-    zoomBehaviorRef.current = zoomBehavior
+      zoomBehaviorRef.current = zoomBehavior
 
-    svg.call(zoomBehavior).call(zoomBehavior.transform, existingTransform)
+      svg.call(zoomBehavior).call(zoomBehavior.transform, existingTransform)
+    } else {
+      svg.on('.zoom', null)
+      lastTransformRef.current = d3.zoomIdentity
+
+      const dragBehavior = d3.drag().on('drag', (event) => {
+        const sensitivity = 0.25
+        setGlobeRotation(([lambda, phi, roll = 0]) => {
+          const nextPhi = Math.max(-90, Math.min(90, phi - event.dy * sensitivity))
+          return [lambda + event.dx * sensitivity, nextPhi, roll]
+        })
+      })
+
+      svg.call(dragBehavior)
+    }
 
     zoomLayer
       .append('path')
@@ -2194,10 +2235,10 @@ function App() {
         .append('g')
         .attr('class', 'markers')
         .selectAll('circle')
-        .data(filteredVisits)
+        .data(visibleVisits)
         .join('circle')
-        .attr('cx', (visit) => projection([visit.lon, visit.lat])[0])
-        .attr('cy', (visit) => projection([visit.lon, visit.lat])[1])
+        .attr('cx', (visit) => visit.projected[0])
+        .attr('cy', (visit) => visit.projected[1])
         .attr('r', (visit) => markerRadius(visit) / zoomSizeAdjustment(lastTransformRef.current?.k ?? 1))
         .attr('fill', (visit) => withOpacity(visit.color, 0.85))
         .attr('stroke', '#0b1020')
@@ -2212,7 +2253,19 @@ function App() {
             )}${visit.lastDate ? `\nLast: ${formatDate(visit.lastDate)}` : ''}`,
         )
     }
-  }, [countryVisits, currentDate, filteredVisits, geographies, libs, showMarkers, showRoutes, stateVisits, timedSegments])
+  }, [
+    countryVisits,
+    currentDate,
+    filteredVisits,
+    geographies,
+    globeRotation,
+    libs,
+    mapMode,
+    showMarkers,
+    showRoutes,
+    stateVisits,
+    timedSegments,
+  ])
 
   useEffect(() => {
     if (!isPlaying || !timeExtent) return () => {}
@@ -2306,6 +2359,26 @@ function App() {
                 </option>
               ))}
             </select>
+
+            <label className="control-label" htmlFor="map-mode">
+              Map mode
+            </label>
+            <div className="map-mode-toggle" id="map-mode" role="group" aria-label="Toggle between flat and 3D maps">
+              <button
+                type="button"
+                className={`map-mode-button ${mapMode === 'flat' ? 'active' : ''}`}
+                onClick={() => setMapMode('flat')}
+              >
+                Flat map
+              </button>
+              <button
+                type="button"
+                className={`map-mode-button ${mapMode === 'globe' ? 'active' : ''}`}
+                onClick={() => setMapMode('globe')}
+              >
+                3D globe
+              </button>
+            </div>
 
             <label className="control-label" htmlFor="timeline">
               Timeline preview

@@ -117,6 +117,39 @@ select {
   flex-wrap: wrap;
 }
 
+.map-mode-toggle {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.6rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem;
+  border-radius: 12px;
+}
+
+.map-mode-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: #e2e8f0;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 0.55rem 0.75rem;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.map-mode-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(148, 163, 184, 0.8);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28);
+}
+
+.map-mode-button.active {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(56, 189, 248, 0.1));
+  border-color: rgba(56, 189, 248, 0.65);
+  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.24);
+}
+
 .checkbox {
   display: inline-flex;
   align-items: center;
