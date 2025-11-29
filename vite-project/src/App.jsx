@@ -17,7 +17,7 @@ const PLAYBACK_OPTIONS = [
 const TRIPS = [
   {
     tripName: 'Wine on the Rhine 2021',
-    color: '#2A9D8F', // placeholder — you can pick a color you like
+    color: '#55efc4',
     countries: ['United States of America', 'France', 'Luxembourg', 'Germany', 'Switzerland'],
     itinerary: [
       // 1) Flight SEA -> DFW
@@ -283,7 +283,7 @@ const TRIPS = [
   },
   {
     tripName: 'Nocturnal Wonderland 2022',
-    color: '#FB923C', // placeholder
+    color: '#00b894',
     countries: ['United States of America'],
     itinerary: [
       // 1) SEA -> ONT (Sept 16, 7 AM, ~2 hr)
@@ -328,7 +328,7 @@ const TRIPS = [
   },
   {
     tripName: 'Todrick in Texas 2022',
-    color: '#E11D48', // placeholder
+    color: '#81ecec',
     countries: ['United States of America'],
     itinerary: [
       // 1) SEA -> AUS (Mar 24, 10 AM, 3.5 hrs)
@@ -399,7 +399,7 @@ const TRIPS = [
   },
   {
     tripName: 'Europe Trip 2023',
-    color: '#4F46E5',
+    color: '#00cec9',
     countries: ['United States of America', 'United Kingdom', 'France', 'Spain', 'Ireland'],
     itinerary: [
       {
@@ -582,7 +582,7 @@ const TRIPS = [
   },
   {
     tripName: "Round the world in 18 days 2026",
-    color: "#E53E3E", // placeholder, can change later
+    color: '#74b9ff',
     countries: ['United States of America', 'Spain', 'Portugal', 'Turkey', 'Vietnam', 'Singapore', 'Taiwan'],
     itinerary: [
       // 1) Flight SEA -> ORD
@@ -913,7 +913,7 @@ const TRIPS = [
   },
   {
     tripName: "Stan and Taylor's Wedding",
-    color: '#D97706', // placeholder
+    color: '#0984e3',
     countries: ['United States of America'],
     itinerary: [
       // 1) Flight SEA -> BZN
@@ -984,7 +984,7 @@ const TRIPS = [
   },
   {
     tripName: 'Justin Trip',
-    color: '#10B981', // placeholder
+    color: '#a29bfe',
     countries: ['United States of America'],
     itinerary: [
       // 1) Flight SEA -> SMF
@@ -1081,7 +1081,7 @@ const TRIPS = [
   },
   {
     tripName: 'New Years in Vegas',
-    color: '#F43F5E', // placeholder
+    color: '#6c5ce7',
     countries: ['United States of America'],
     itinerary: [
       // 1) Flight SEA -> SMF (Dec 23)
@@ -1165,7 +1165,7 @@ const TRIPS = [
   },
   {
     tripName: 'Six in Spokane',
-    color: '#3B82F6', // placeholder
+    color: '#ffeaa7',
     countries: ['United States of America'],
     itinerary: [
       // 1) Drive Seattle -> Spokane (Jan 26)
@@ -1262,7 +1262,7 @@ const TRIPS = [
   },
   {
     tripName: "Blake and Han's 10th Anniversary",
-    color: '#9333EA', // placeholder
+    color: '#fdcb6e',
     countries: ['United States of America'],
     itinerary: [
       // 1) Drive Issaquah → Eugene (Aug 6, 6 PM → 12:21 AM)
@@ -1333,7 +1333,7 @@ const TRIPS = [
   },
   {
     tripName: 'Denver 2023',
-    color: '#F97316',
+    color: '#fab1a0',
     countries: ['United States of America'],
     itinerary: [
       // SEA -> DEN
@@ -1378,7 +1378,7 @@ const TRIPS = [
   },
   {
     tripName: 'Crater Lake 2022',
-    color: '#1D4ED8',
+    color: '#e17055',
     countries: ['United States of America'],
     itinerary: [
       // Seattle -> Chiloquin (June 3)
@@ -1449,7 +1449,7 @@ const TRIPS = [
   },
   {
     tripName: 'Beyond Wonderland 2022',
-    color: '#EC4899',
+    color: '#ff7675',
     countries: ['United States of America'],
     itinerary: [
       // Seattle → Gorge Amphitheater (June 18 early morning)
@@ -1494,7 +1494,7 @@ const TRIPS = [
   },
   {
     tripName: 'Beyond The Elephant 2024',
-    color: '#A855F7',
+    color: '#d63031',
     countries: ['United States of America'],
     itinerary: [
       // Seattle → Gorge (June 22, Midnight → 4 AM)
@@ -1565,7 +1565,7 @@ const TRIPS = [
   },
   {
     tripName: 'Pokemon and Colorado',
-    color: '#0EA5E9', // placeholder
+    color: '#fd79a8',
     countries: ['United States of America', 'Canada'],
     itinerary: [
       // 1) Drive Seattle → Vancouver BC (Sept 26, 9:30 AM → ~3:00 PM)
