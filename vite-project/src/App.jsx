@@ -8,7 +8,6 @@ const MAP_ENDPOINTS = {
 }
 
 const PLAY_DURATION_MS = 16000
-const TARGET_FRAME_MS = 1000 / 60
 
 const TRIPS = [
   {
@@ -2223,10 +2222,8 @@ function App() {
       const elapsed = timestamp - lastTickRef.current
       lastTickRef.current = timestamp
 
-      const normalizedElapsed = Math.min(elapsed, TARGET_FRAME_MS)
-
       setSliderValue((previous) => {
-        const next = previous + (normalizedElapsed / PLAY_DURATION_MS) * 100
+        const next = previous + (elapsed / PLAY_DURATION_MS) * 100
         if (next >= 100) {
           setIsPlaying(false)
           return 100
