@@ -2043,6 +2043,41 @@ function App() {
     }
   }, [])
 
+  const shouldAutoFollow = mapMode === 'globe' && selectedTrip !== 'all' && timedSegments.length > 0
+
+  useEffect(() => {
+    if (!libs || !shouldAutoFollow) return
+
+    const { d3 } = libs
+    const ordered = [...timedSegments].sort((a, b) => a.date.getTime() - b.date.getTime())
+    const activeSegment = ordered.find((segment, index) => {
+      const next = ordered[index + 1]
+      const isLast = !next
+      const inProgress = segment.progress < 1
+      const nextStartsLater = next && next.date.getTime() > currentDate.getTime()
+      return inProgress || (isLast && !nextStartsLater) || nextStartsLater
+    })
+
+    if (!activeSegment) return
+
+    const interpolator = d3.geoInterpolate(
+      [activeSegment.start.lon, activeSegment.start.lat],
+      [activeSegment.end.lon, activeSegment.end.lat],
+    )
+
+    const [lon, lat] = interpolator(Math.min(1, Math.max(0, activeSegment.progress)))
+    const targetRotation = [-lon, -lat, globeRotation[2] ?? 0]
+
+    setGlobeRotation(([lambda, phi, roll = 0]) => {
+      const blend = 0.16
+      return [
+        lambda + (targetRotation[0] - lambda) * blend,
+        phi + (targetRotation[1] - phi) * blend,
+        roll,
+      ]
+    })
+  }, [currentDate, globeRotation, libs, shouldAutoFollow, timedSegments])
+
   useEffect(() => {
     if (!libs || !geographies || !currentDate) return
 
