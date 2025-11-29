@@ -2049,7 +2049,8 @@ function App() {
     }
   }, [])
 
-  const shouldAutoFollow = mapMode === 'globe' && selectedTrip !== 'all' && timedSegments.length > 0
+  const shouldAutoFollow =
+    mapMode === 'globe' && selectedTrip !== 'all' && timedSegments.length > 0 && isPlaying
 
   useEffect(() => {
     if (!libs || !shouldAutoFollow) return
