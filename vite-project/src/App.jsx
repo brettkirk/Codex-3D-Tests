@@ -926,7 +926,7 @@ const TRIPS = [
         lonTo: -111.1530,
         date: '2022-07-29T14:13:00Z', // 7:13 AM PDT
         duration: 165, // 2h 45m
-        type: 'flight'
+        type: 'flight',
       },
 
       // 2) Drive BZN -> Lewistown (3 hours)
@@ -952,7 +952,7 @@ const TRIPS = [
         lonTo: -109.4282,
         date: '2022-07-29T21:00:00Z', // 3:00 PM MDT
         duration: 4050, // from afternoon 7/29 → departure late morning 8/1
-        type: 'stay'
+        type: 'stay',
       },
 
       // 4) Drive Lewistown -> BZN (3 hours)
@@ -965,7 +965,7 @@ const TRIPS = [
         lonTo: -111.1530,
         date: '2022-08-01T16:30:00Z', // morning departure to catch afternoon flight
         duration: 180, // 3 hours
-        type: 'car'
+        type: 'car',
       },
 
       // 5) Flight BZN -> SEA
@@ -997,7 +997,7 @@ const TRIPS = [
         lonTo: -121.5908,
         date: '2025-10-30T14:45:00Z', // 7:45 AM PDT
         duration: 120,
-        type: 'flight'
+        type: 'flight',
       },
 
       // 2) Stay in Folsom, CA (Oct 30 → Oct 31)
@@ -1010,7 +1010,7 @@ const TRIPS = [
         lonTo: -121.176056,
         date: '2025-10-30T22:00:00Z', // 3 PM PDT check-in
         duration: 1200, // until 11 AM 10/31
-        type: 'stay'
+        type: 'stay',
       },
 
       // 3) Drive Folsom → Walnut Creek (Nov 1, 10 AM → 12 PM)
@@ -1023,7 +1023,7 @@ const TRIPS = [
         lonTo: -122.0652,
         date: '2025-11-01T17:00:00Z', // 10 AM PDT
         duration: 120, // 2 hr
-        type: 'car'
+        type: 'car',
       },
 
       // 4) Drive Walnut Creek → Paso Robles (1 PM → 5:30 PM)
@@ -1036,7 +1036,7 @@ const TRIPS = [
         lonTo: -120.6910,
         date: '2025-11-01T20:00:00Z', // 1 PM PDT
         duration: 270, // 4 hr 30 min
-        type: 'car'
+        type: 'car',
       },
 
       // 5) Stay in Paso Robles (Nov 1 → Nov 2)
@@ -1049,7 +1049,7 @@ const TRIPS = [
         lonTo: -120.6910,
         date: '2025-11-01T22:00:00Z', // ~3 PM local (after drive)
         duration: 1455, // until ~5 PM 11/2 (departure)
-        type: 'stay'
+        type: 'stay',
       },
 
       // 6) Drive Paso Robles → Folsom (Nov 2, ~5 PM → ~11 PM)
@@ -1062,7 +1062,7 @@ const TRIPS = [
         lonTo: -121.176056,
         date: '2025-11-02T00:00:00Z', // 5 PM PDT
         duration: 360, // 6 hr
-        type: 'car'
+        type: 'car',
       },
 
       // 7) Flight SMF -> SEA (Nov 3, 5 PM, 2-hour flight)
@@ -1107,7 +1107,7 @@ const TRIPS = [
         lonTo: -121.176056,
         date: '2024-12-23T23:00:00Z', // ~3 PM check-in after flight/drive
         duration: 4260, // until 11 AM 12/26
-        type: 'stay'
+        type: 'stay',
       },
 
       // 3) Flight SMF -> SAN (Dec 26)
@@ -1159,7 +1159,7 @@ const TRIPS = [
         lonTo: -122.301659,
         date: '2024-12-29T23:00:00Z', // 3 PM PST
         duration: 170, // 2h 50m
-        type: 'flight'
+        type: 'flight',
       }
     ]
   },
@@ -1178,7 +1178,7 @@ const TRIPS = [
         lonTo: -117.426,
         date: '2024-01-26T19:00:00Z', // 11 AM PST
         duration: 380, // 6h 20m (arrived 5:20 PM)
-        type: 'car'
+        type: 'car',
       },
 
       // 2) Hotel stay at Oxford Suites (Jan 26–27)
@@ -1191,7 +1191,7 @@ const TRIPS = [
         lonTo: -117.4106,
         date: '2024-01-26T23:00:00Z', // 3 PM check-in (arrival was later, but overlap rule: start at arrival)
         duration: 660, // until 12 PM departure next day (1/27)
-        type: 'stay'
+        type: 'stay',
       },
 
       // 3) Drive Spokane -> Coeur d'Alene (Jan 27)
@@ -1204,7 +1204,7 @@ const TRIPS = [
         lonTo: -116.7805,
         date: '2024-01-27T20:00:00Z', // 12 PM PST
         duration: 80, // 1h 20m (approx)
-        type: 'car'
+        type: 'car',
       },
 
       // 4) Stay / hang out in Coeur d'Alene for 6 hours
@@ -1217,7 +1217,7 @@ const TRIPS = [
         lonTo: -116.7805,
         date: '2024-01-27T21:20:00Z', // arrival + few minutes
         duration: 360, // 6 hours
-        type: 'stay'
+        type: 'stay',
       },
 
       // 5) Drive Coeur d'Alene -> Spokane at 7 PM
@@ -2150,6 +2150,310 @@ const TRIPS = [
         type: 'flight',
       },
     ],
+  },
+  {
+    tripName: "Jordan and Dylan's Wedding",
+    color: '#F97316',
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) SEA -> SMF flight
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6907,
+        lonTo: -121.5878,
+        date: '2024-04-19T17:30:00Z', // 10:30 AM PDT
+        duration: 110, // ~1h50 assumed
+        type: 'flight'
+      },
+
+      // 2) Folsom stay (19th → morning 20th)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2024-04-19T22:00:00Z', // 3:00 PM PDT check-in
+        duration: 1170, // to 10:30 AM next day
+        type: 'stay'
+      },
+
+      // 3) Drive Folsom -> Lodi (wine tasting)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Lodi, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.1302,
+        lonTo: -121.2725,
+        date: '2024-04-20T17:30:00Z', // 10:30 AM PDT
+        duration: 60, // ~1 hour
+        type: 'car'
+      },
+
+      // 4) Drive Lodi -> Placerville (wedding)
+      {
+        airportFrom: 'Lodi, California',
+        airportTo: 'Placerville, California',
+        latFrom: 38.1302,
+        lonFrom: -121.2725,
+        latTo: 38.7296,
+        lonTo: -120.7986,
+        date: '2024-04-20T22:30:00Z', // 3:30 PM PDT
+        duration: 90, // ~1.5 hours
+        type: 'car'
+      },
+
+      // 5) Wedding time in Placerville (through 10 PM)
+      {
+        airportFrom: 'Placerville, California',
+        airportTo: 'Placerville, California',
+        latFrom: 38.7296,
+        lonFrom: -120.7986,
+        latTo: 38.7296,
+        lonTo: -120.7986,
+        date: '2024-04-21T00:00:00Z', // ~5 PM PDT
+        duration: 300, // 5 hours (to 10 PM)
+        type: 'stay'
+      },
+
+      // 6) Drive Placerville -> Folsom (10 PM)
+      {
+        airportFrom: 'Placerville, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.7296,
+        lonFrom: -120.7986,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2024-04-21T05:00:00Z', // 10 PM PDT
+        duration: 45,
+        type: 'car'
+      },
+
+      // 7) Folsom stay (late 20th → flight on 21st)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2024-04-21T06:00:00Z', // ~11 PM PDT
+        duration: 930, // to 2:30 PM next day
+        type: 'stay'
+      },
+
+      // 8) SMF -> SEA flight
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6907,
+        lonFrom: -121.5878,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2024-04-21T21:30:00Z', // 2:30 PM PDT
+        duration: 120, // ~2 hours
+        type: 'flight',
+      }
+    ]
+  },
+  {
+    tripName: "Berny and Trevor's Wedding",
+    color: '#F97373',
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) SEA -> SMF (arrival ~4 PM)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6907,
+        lonTo: -121.5878,
+        date: '2024-10-04T21:00:00Z', // ~2 PM PDT departure, 4 PM arrival assumed
+        duration: 120,
+        type: 'flight'
+      },
+
+      // 2) Folsom stay (Oct 4 → Oct 5 2:30 PM)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2024-10-04T23:00:00Z', // 4 PM PDT
+        duration: 1350, // to 2:30 PM next day
+        type: 'stay'
+      },
+
+      // 3) Drive Folsom -> El Dorado Hills
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'El Dorado Hills, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.6848,
+        lonTo: -121.076,
+        date: '2024-10-05T21:30:00Z', // 2:30 PM PDT
+        duration: 30,
+        type: 'car'
+      },
+
+      // 4) Time in El Dorado Hills (until ~midnight)
+      {
+        airportFrom: 'El Dorado Hills, California',
+        airportTo: 'El Dorado Hills, California',
+        latFrom: 38.6848,
+        lonFrom: -121.076,
+        latTo: 38.6848,
+        lonTo: -121.076,
+        date: '2024-10-05T22:00:00Z', // ~3 PM
+        duration: 540, // to midnight
+        type: 'stay'
+      },
+
+      // 5) Drive El Dorado Hills -> Folsom (midnight)
+      {
+        airportFrom: 'El Dorado Hills, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.6848,
+        lonFrom: -121.076,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2024-10-06T07:00:00Z', // midnight PDT
+        duration: 30,
+        type: 'car'
+      },
+
+      // 6) Folsom stay (overnight → 9 PM flight next day)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2024-10-06T07:30:00Z', // ~12:30 AM
+        duration: 1230, // to 9 PM PDT
+        type: 'stay'
+      },
+
+      // 7) SMF -> SEA (~9 PM)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6907,
+        lonFrom: -121.5878,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2024-10-07T04:00:00Z', // 9 PM PDT on Oct 6
+        duration: 120,
+        type: 'flight'
+      }
+    ]
+  },
+  {
+    tripName: "Lauren and Hunter's Wedding",
+    color: '#FACC15',
+    countries: ['United States of America'],
+    itinerary: [
+      // 1) SEA -> SMF (Feb 28, ~10:30 AM)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6907,
+        lonTo: -121.5878,
+        date: '2025-02-28T18:30:00Z', // 10:30 AM PST
+        duration: 120,
+        type: 'flight'
+      },
+
+      // 2) Folsom stay (Feb 28 → Mar 2, noon)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2025-02-28T23:00:00Z', // 3 PM PST
+        duration: 2700, // to ~12 PM Mar 2
+        type: 'stay'
+      },
+
+      // 3) Drive Folsom -> Petaluma (arrive ~3 PM)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Petaluma, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.2458,
+        lonTo: -122.6313,
+        date: '2025-03-02T20:00:00Z', // 12 PM PST
+        duration: 180, // ~3 hours
+        type: 'car'
+      },
+
+      // 4) Wedding time in Petaluma (3 PM → 9 PM)
+      {
+        airportFrom: 'Petaluma, California',
+        airportTo: 'Petaluma, California',
+        latFrom: 38.2458,
+        lonFrom: -122.6313,
+        latTo: 38.2458,
+        lonTo: -122.6313,
+        date: '2025-03-02T23:00:00Z', // 3 PM PST
+        duration: 360, // 6 hours
+        type: 'stay'
+      },
+
+      // 5) Drive Petaluma -> Folsom (9 PM → ~midnight)
+      {
+        airportFrom: 'Petaluma, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.2458,
+        lonFrom: -122.6313,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2025-03-03T05:00:00Z', // 9 PM PST
+        duration: 180, // ~3 hours
+        type: 'car'
+      },
+
+      // 6) Folsom stay (late night → 4 PM flight)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176058,
+        latTo: 38.677959,
+        lonTo: -121.176058,
+        date: '2025-03-03T08:00:00Z', // ~midnight PST
+        duration: 960, // until 4 PM
+        type: 'stay'
+      },
+
+      // 7) SMF -> SEA (Mar 3, ~4 PM)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6907,
+        lonFrom: -121.5878,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2025-03-04T00:00:00Z', // 4 PM PST
+        duration: 120,
+        type: 'flight'
+      }
+    ]
   }
 ]
 
