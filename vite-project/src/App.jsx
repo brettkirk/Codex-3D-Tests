@@ -1564,6 +1564,458 @@ const TRIPS = [
     ],
   },
   {
+    tripName: 'Camping at Newport Beach 2022',
+    color: '#059669',
+    countries: ['United States of America'],
+    itinerary: [
+      // Seattle → South Beach State Park (Aug 6)
+      {
+        airportFrom: 'Seattle, Washington',
+        airportTo: 'South Beach State Park, Newport, Oregon',
+        latFrom: 47.6062,
+        lonFrom: -122.3321,
+        latTo: 44.6114,
+        lonTo: -124.0594,
+        date: '2022-08-06T17:00:00Z', // 10 AM PDT
+        duration: 540, // 9 hr drive → ~7 PM arrival
+        type: 'car',
+      },
+
+      // Camping overnight (Aug 6–7)
+      {
+        airportFrom: 'South Beach State Park (Campground)',
+        airportTo: 'South Beach State Park (Campground)',
+        latFrom: 44.6114,
+        lonFrom: -124.0594,
+        latTo: 44.6114,
+        lonTo: -124.0594,
+        date: '2022-08-07T02:00:00Z',
+        duration: 840, // until 4:30 PM
+        type: 'stay',
+      },
+
+      // South Beach → Tillamook (Aug 7)
+      {
+        airportFrom: 'South Beach, Oregon',
+        airportTo: 'Tillamook Creamery, Tillamook, Oregon',
+        latFrom: 44.6114,
+        lonFrom: -124.0594,
+        latTo: 45.4551,
+        lonTo: -123.8157,
+        date: '2022-08-07T23:30:00Z', // 4:30 PM PDT
+        duration: 45, // 45 min
+        type: 'car',
+      },
+
+      // Tillamook → Benihana in Beaverton/Greenway (6:30 PM → 8 PM)
+      {
+        airportFrom: 'Tillamook, Oregon',
+        airportTo: 'Benihana, Greenway, Beaverton OR',
+        latFrom: 45.4551,
+        lonFrom: -123.8157,
+        latTo: 45.4625,
+        lonTo: -122.8258,
+        date: '2022-08-08T01:30:00Z', // 6:30 PM PDT
+        duration: 90,
+        type: 'car',
+      },
+
+      // Benihana → Seattle (10 PM → ~3:30 AM)
+      {
+        airportFrom: 'Beaverton, Oregon',
+        airportTo: 'Seattle, Washington',
+        latFrom: 45.4625,
+        lonFrom: -122.8258,
+        latTo: 47.6062,
+        lonTo: -122.3321,
+        date: '2022-08-08T05:00:00Z', // 10 PM PDT
+        duration: 330, // 5.5 hrs typical
+        type: 'car',
+      },
+    ],
+  },
+  {
+    tripName: 'Thanksgiving 2022',
+    color: '#DC2626',
+    countries: ['United States of America'],
+    itinerary: [
+      // SEA → SMF (Nov 23)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6951,
+        lonTo: -121.5908,
+        date: '2022-11-24T06:00:00Z', // 10 PM PST
+        duration: 105, // 1h45m
+        type: 'flight',
+      },
+
+      // Stay in Folsom (Nov 23–25)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2022-11-24T08:00:00Z', // after arrival
+        duration: 3120, // until 8 AM on the 25th
+        type: 'stay',
+      },
+
+      // Folsom → Camino Christmas tree trip (8 AM → ~10 AM)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Camino, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.7438,
+        lonTo: -120.6649,
+        date: '2022-11-25T16:00:00Z', // 8 AM PST
+        duration: 120,
+        type: 'car',
+      },
+
+      // Camino → Folsom return (~10 AM → 3 PM)
+      {
+        airportFrom: 'Camino, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.7438,
+        lonFrom: -120.6649,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2022-11-25T18:00:00Z',
+        duration: 300, // 5 hours including picking tree / normal traffic
+        type: 'car',
+      },
+
+      // Stay in Folsom (Nov 25–28)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2022-11-25T23:00:00Z',
+        duration: 4560, // until 2 PM Nov 28
+        type: 'stay',
+      },
+
+      // SMF → SEA (Nov 28, 2 PM → 4:15 PM)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6951,
+        lonFrom: -121.5908,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2022-11-28T22:00:00Z',
+        duration: 135,
+        type: 'flight',
+      },
+    ],
+  },
+  {
+    tripName: 'Makeup Christmas 2022 (in 2023)',
+    color: '#2563EB',
+    countries: ['United States of America'],
+    itinerary: [
+      // SEA → SMF (Jan 27, 9 PM)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6951,
+        lonTo: -121.5908,
+        date: '2023-01-28T05:00:00Z', // 9 PM PST
+        duration: 110,
+        type: 'flight',
+      },
+
+      // Stay in Folsom until Jan 31
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2023-01-28T07:00:00Z',
+        duration: 4785, // until 2:15 PM on Jan 31
+        type: 'stay',
+      },
+
+      // SMF → SEA (Jan 31, 2:15 PM)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6951,
+        lonFrom: -121.5908,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2023-01-31T22:15:00Z',
+        duration: 120,
+        type: 'flight',
+      },
+    ],
+  },
+  {
+    tripName: 'Christmas Party 2023',
+    color: '#22C55E',
+    countries: ['United States of America'],
+    itinerary: [
+      // SEA → SMF (Dec 8, 10:30 AM → 12:20 PM)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6951,
+        lonTo: -121.5908,
+        date: '2023-12-08T18:30:00Z',
+        duration: 110,
+        type: 'flight',
+      },
+
+      // Time in Folsom before Roseville trip
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2023-12-08T20:30:00Z',
+        duration: 510, // until 7 PM
+        type: 'stay',
+      },
+
+      // Folsom → Roseville (7 PM → 7:40 PM typical)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Roseville, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.7521,
+        lonTo: -121.288,
+        date: '2023-12-09T03:00:00Z',
+        duration: 40,
+        type: 'car',
+      },
+
+      // Roseville → Folsom (9 PM → 9:40 PM)
+      {
+        airportFrom: 'Roseville, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.7521,
+        lonFrom: -121.288,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2023-12-09T05:00:00Z',
+        duration: 40,
+        type: 'car',
+      },
+
+      // Stay in Folsom (Dec 8–10)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2023-12-09T06:00:00Z',
+        duration: 4380, // until 1 PM Dec 10
+        type: 'stay',
+      },
+
+      // SMF → SEA (Dec 10, 1 PM)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6951,
+        lonFrom: -121.5908,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2023-12-10T21:00:00Z',
+        duration: 120,
+        type: 'flight',
+      },
+    ],
+  },
+  {
+    tripName: 'Christmas 2023',
+    color: '#4ADE80',
+    countries: ['United States of America'],
+    itinerary: [
+      // SEA → SMF (Dec 23, 3 PM)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6951,
+        lonTo: -121.5908,
+        date: '2023-12-23T23:00:00Z',
+        duration: 110,
+        type: 'flight',
+      },
+
+      // Stay in Folsom (Dec 23–26)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2023-12-24T01:00:00Z',
+        duration: 4320, // until 9 AM Dec 26
+        type: 'stay',
+      },
+
+      // SMF → SEA (Dec 26, 9 AM)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6951,
+        lonFrom: -121.5908,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2023-12-26T17:00:00Z',
+        duration: 120,
+        type: 'flight',
+      },
+    ],
+  },
+  {
+    tripName: "Anj and Michael's Wedding",
+    color: '#C026D3',
+    countries: ['United States of America'],
+    itinerary: [
+      // SEA → SMF (Feb 1)
+      {
+        airportFrom: 'Seattle–Tacoma International Airport (SEA)',
+        airportTo: 'Sacramento International Airport (SMF)',
+        latFrom: 47.443546,
+        lonFrom: -122.301659,
+        latTo: 38.6951,
+        lonTo: -121.5908,
+        date: '2024-02-02T04:30:00Z', // 8:30 PM PST
+        duration: 120,
+        type: 'flight',
+      },
+
+      // Stay in Folsom (Feb 1–2)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2024-02-02T06:30:00Z',
+        duration: 660, // until ~5:30 PM
+        type: 'stay',
+      },
+
+      // Folsom → Sacramento (~6:30 PM)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Sacramento, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.5816,
+        lonTo: -121.4944,
+        date: '2024-02-02T14:30:00Z', // 6:30 PM PST
+        duration: 45,
+        type: 'car',
+      },
+
+      // Sacramento → Elk Grove (~midnight → 1 AM)
+      {
+        airportFrom: 'Sacramento, California',
+        airportTo: 'Elk Grove, California',
+        latFrom: 38.5816,
+        lonFrom: -121.4944,
+        latTo: 38.4088,
+        lonTo: -121.3716,
+        date: '2024-02-03T08:00:00Z', // midnight PST
+        duration: 60,
+        type: 'car',
+      },
+
+      // Elk Grove → Folsom (1 AM → 2 AM)
+      {
+        airportFrom: 'Elk Grove, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.4088,
+        lonFrom: -121.3716,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2024-02-03T09:00:00Z',
+        duration: 60,
+        type: 'car',
+      },
+
+      // Stay in Folsom (Feb 2–3 → ~3 PM)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Folsom, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.677959,
+        lonTo: -121.176056,
+        date: '2024-02-03T10:00:00Z',
+        duration: 300, // until 3 PM
+        type: 'stay',
+      },
+
+      // Folsom → Placerville (wedding, Feb 3)
+      {
+        airportFrom: 'Folsom, California',
+        airportTo: 'Placerville, California',
+        latFrom: 38.677959,
+        lonFrom: -121.176056,
+        latTo: 38.7296,
+        lonTo: -120.7986,
+        date: '2024-02-03T23:00:00Z', // 3 PM PST
+        duration: 45,
+        type: 'car',
+      },
+
+      // Stay in Placerville (Feb 3–4)
+      {
+        airportFrom: 'Placerville, California',
+        airportTo: 'Placerville, California',
+        latFrom: 38.7296,
+        lonFrom: -120.7986,
+        latTo: 38.7296,
+        lonTo: -120.7986,
+        date: '2024-02-03T23:45:00Z',
+        duration: 1140, // until noon Feb 4
+        type: 'stay',
+      },
+
+      // SMF → SEA (Feb 4, 5 PM)
+      {
+        airportFrom: 'Sacramento International Airport (SMF)',
+        airportTo: 'Seattle–Tacoma International Airport (SEA)',
+        latFrom: 38.6951,
+        lonFrom: -121.5908,
+        latTo: 47.443546,
+        lonTo: -122.301659,
+        date: '2024-02-05T01:00:00Z',
+        duration: 120,
+        type: 'flight',
+      },
+    ],
+  },
+  {
     tripName: 'Pokemon and Colorado',
     color: '#ED4C67',
     countries: ['United States of America', 'Canada'],
