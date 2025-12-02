@@ -2559,6 +2559,7 @@ const buildVisitCounts = (segments) => {
         visits: 1,
         firstDate: date,
         lastDate: date,
+        occurrenceDates: [date],
       })
       return
     }
@@ -2567,6 +2568,7 @@ const buildVisitCounts = (segments) => {
 
     entry.visits += 1
     entry.trips.add(tripName)
+    entry.occurrenceDates.push(date)
     entry.firstDate = isEarlier ? date : entry.firstDate
     entry.lastDate = date > entry.lastDate ? date : entry.lastDate
 
@@ -2589,7 +2591,10 @@ const buildVisitCounts = (segments) => {
     )
   })
 
-  return Array.from(visitMap.values())
+  return Array.from(visitMap.values()).map((visit) => ({
+    ...visit,
+    occurrenceDates: visit.occurrenceDates.sort((a, b) => a.getTime() - b.getTime()),
+  }))
 }
 
 const isTerritory = (feature) => {
@@ -2717,13 +2722,24 @@ function App() {
       })
   }, [currentDate, selectedSegments])
 
-  const filteredVisits = useMemo(
-    () =>
-      visitsForSelection.filter(
-        (visit) => !currentDate || visit.firstDate.getTime() <= currentDate.getTime(),
-      ),
-    [currentDate, visitsForSelection],
-  )
+  const filteredVisits = useMemo(() => {
+    const currentTimestamp = currentDate?.getTime()
+
+    return visitsForSelection
+      .map((visit) => {
+        if (!currentTimestamp) return { ...visit, visitsSoFar: visit.visits }
+
+        const visitsSoFar = visit.occurrenceDates?.filter(
+          (date) => date.getTime() <= currentTimestamp,
+        ).length
+
+        return {
+          ...visit,
+          visitsSoFar: Math.max(1, visitsSoFar ?? visit.visits ?? 1),
+        }
+      })
+      .filter((visit) => !currentTimestamp || visit.firstDate.getTime() <= currentTimestamp)
+  }, [currentDate, visitsForSelection])
 
   const countryVisits = useMemo(() => {
     if (!libs || !geographies) return new Map()
@@ -2876,7 +2892,7 @@ function App() {
     const path = d3.geoPath(projection)
     const graticule = d3.geoGraticule10()
 
-    const markerRadius = (visit) => 3 + Math.sqrt(visit.visits) * 3
+    const markerRadius = (visit) => 3 + Math.sqrt(visit.visitsSoFar ?? visit.visits) * 3
     const routeWidth = (segment) => {
       if (segment.type === 'train') return 3.5
       if (segment.type === 'car') return 2.8
@@ -3074,7 +3090,9 @@ function App() {
       .join('title')
       .text(
         (visit) =>
-          `${visit.label}\n${visit.trips.size} trip${visit.trips.size === 1 ? '' : 's'} · ${visit.visits} visit${visit.visits === 1 ? '' : 's'}\nFirst: ${formatDate(
+          `${visit.label}\n${visit.trips.size} trip${visit.trips.size === 1 ? '' : 's'} · ${
+            visit.visitsSoFar ?? visit.visits
+          } visit${(visit.visitsSoFar ?? visit.visits) === 1 ? '' : 's'}\nFirst: ${formatDate(
             visit.firstDate,
           )}${visit.lastDate ? `\nLast: ${formatDate(visit.lastDate)}` : ''}`,
       )
